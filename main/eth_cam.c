@@ -30,10 +30,16 @@
 
 static const char *TAG = "eth_cam";
 
+#define USE_JPEG 1
+
 #define PART_BOUNDARY "123456789000000000000987654321"
 static const char* _STREAM_CONTENT_TYPE = "multipart/x-mixed-replace;boundary=" PART_BOUNDARY;
 static const char* _STREAM_BOUNDARY = "\r\n--" PART_BOUNDARY "\r\n";
-static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n";
+#if USE_JPEG
+static const char* _STREAM_PART_JPEG = "Content-Type: image/jpeg\r\nContent-Length: %u\r\n\r\n";
+#else
+static const char* _STREAM_PART_BMP  = "Content-Type: image/bmp\r\nContent-Length: %u\r\n\r\n";
+#endif
 
 #define CONFIG_XCLK_FREQ 20000000 
 
@@ -62,12 +68,14 @@ static esp_err_t init_camera(void)
         .ledc_timer = LEDC_TIMER_0,
         .ledc_channel = LEDC_CHANNEL_0,
 
-        .pixel_format = PIXFORMAT_JPEG,
-        .frame_size = FRAMESIZE_QVGA, //FRAMESIZE_VGA,
+        .pixel_format = PIXFORMAT_RGB565, //= PIXFORMAT_JPEG,
+        .frame_size = FRAMESIZE_96X96, //= FRAMESIZE_QVGA, //FRAMESIZE_VGA,
 
-        .jpeg_quality = 10,
+        .jpeg_quality = 10, //0-63, for OV series camera sensors, lower number means higher quality
         .fb_count = 1,
-        .grab_mode = CAMERA_GRAB_WHEN_EMPTY};//CAMERA_GRAB_LATEST. Sets when buffers should be filled
+        .grab_mode = CAMERA_GRAB_WHEN_EMPTY //CAMERA_GRAB_LATEST. Sets when buffers should be filled
+    };
+
     esp_err_t err = esp_camera_init(&camera_config);
     if (err != ESP_OK)
     {
@@ -76,11 +84,28 @@ static esp_err_t init_camera(void)
     return ESP_OK;
 }
 
+void putpixel(camera_fb_t *fb, size_t x, size_t y, uint16_t c){
+    fb->buf[(y*fb->width + x)*2] = c;
+}
+
+void drawCircle(camera_fb_t *fb, size_t xc, size_t yc, size_t x, size_t y, uint16_t c)
+{
+	putpixel(fb, xc+x, yc+y, c);
+	putpixel(fb, xc-x, yc+y, c);
+	putpixel(fb, xc+x, yc-y, c);
+	putpixel(fb, xc-x, yc-y, c);
+	putpixel(fb, xc+y, yc+x, c);
+	putpixel(fb, xc-y, yc+x, c);
+	putpixel(fb, xc+y, yc-x, c);
+	putpixel(fb, xc-y, yc-x, c);
+}
+
+
 esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
     camera_fb_t * fb = NULL;
     esp_err_t res = ESP_OK;
-    size_t _jpg_buf_len;
-    uint8_t * _jpg_buf;
+    size_t _buf_len;
+    uint8_t * _buf;
     char * part_buf[64];
     static int64_t last_frame = 0;
     if(!last_frame) {
@@ -92,6 +117,18 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
         return res;
     }
 
+    uint16_t c = 0xf800; //rrrr rggg gggb bbbb
+    c=0x001f; //blue
+    c=0x07e0; //green
+    //c=0x07e0; //red
+    //c=0xffff; //yellow!
+
+    int xc = 48; //fb->width/2;
+    int yc = 48; //fb->height/2;
+    int r = 10;
+    int d;
+
+    c = (c >> 8) | (c << 8); //to little endian
     while(true){
         fb = esp_camera_fb_get();
         if (!fb) {
@@ -100,31 +137,72 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
             break;
         }
         if(fb->format != PIXFORMAT_JPEG){
-            bool jpeg_converted = frame2jpg(fb, 80, &_jpg_buf, &_jpg_buf_len);
+            ESP_LOGI(TAG, "pf: %u, l: %u, w: %u, h: %u, xc: %d, yc: %d, r: %u", fb->format, fb->len, fb->width, fb->height, xc, yc, r);
+            size_t x = 0;
+            size_t y = r;
+            d = 3-(2*r);
+
+	        drawCircle(fb, xc, yc, x, y, c);
+	        while (y >= x)
+	        {
+        		// for each pixel we will
+		        // draw all eight pixels
+		
+        		x++;
+
+        		// check for decision parameter
+        		// and correspondingly
+        		// update d, x, y
+        		if (d > 0){
+        			y--;
+		        	d = d + 4 * (x - y) + 10;
+        		}else{
+        			d = d + 4 * x + 6;
+                }
+		        drawCircle(fb, xc, yc, x, y, c);
+            }
+            //for(int x=0;x<fb->width;x++){
+            //    for(int y=0;y<10;y++){
+            //        putpixel(fb,x,y,c);
+            //    }
+            //}
+#if USE_JPEG
+            bool jpeg_converted = frame2jpg(fb, 99, &_buf, &_buf_len);
             if(!jpeg_converted){
                 ESP_LOGE(TAG, "JPEG compression failed");
                 esp_camera_fb_return(fb);
                 res = ESP_FAIL;
             }
-            ESP_LOGI(TAG, "frame2jpg");
-        } else {
-            _jpg_buf_len = fb->len;
-            _jpg_buf = fb->buf;
+#else
+            bool bmp_converted = frame2bmp(fb, &_buf, &_buf_len);
+            if(!bmp_converted){
+                ESP_LOGE(TAG, "BMP generation failed");
+                esp_camera_fb_return(fb);
+                res = ESP_FAIL;
+            }
+#endif
+        }else{
+            _buf_len = fb->len;
+            _buf = fb->buf;
         }
 
         if(res == ESP_OK){
             res = httpd_resp_send_chunk(req, _STREAM_BOUNDARY, strlen(_STREAM_BOUNDARY));
         }
         if(res == ESP_OK){
-            size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART, _jpg_buf_len);
+#if USE_JPEG
+            size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART_JPEG, _buf_len);
+#else
+            size_t hlen = snprintf((char *)part_buf, 64, _STREAM_PART_BMP, _buf_len);
+#endif
 
             res = httpd_resp_send_chunk(req, (const char *)part_buf, hlen);
         }
         if(res == ESP_OK){
-            res = httpd_resp_send_chunk(req, (const char *)_jpg_buf, _jpg_buf_len);
+            res = httpd_resp_send_chunk(req, (const char *)_buf, _buf_len);
         }
         if(fb->format != PIXFORMAT_JPEG){
-            free(_jpg_buf);
+            free(_buf);
         }
         esp_camera_fb_return(fb);
         if(res != ESP_OK){
@@ -135,7 +213,7 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
         last_frame = fr_end;
         frame_time /= 1000;
         ESP_LOGI(TAG, "MJPG: %luKB %lums (%.1ffps)",
-            (uint32_t)(_jpg_buf_len/1024),
+            (uint32_t)(_buf_len/1024),
             (uint32_t)frame_time, 1000.0 / (uint32_t)frame_time);
     }
 

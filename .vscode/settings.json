@@ -1,0 +1,24 @@
+{
+    "idf.adapterTargetName": "esp32",
+    "C_Cpp.errorSquiggles": "enabled",
+    "idf.customExtraPaths": "/home/henrik/.espressif/tools/xtensa-esp-elf-gdb/11.2_20220823/xtensa-esp-elf-gdb/bin:/home/henrik/.espressif/tools/riscv32-esp-elf-gdb/11.2_20220823/riscv32-esp-elf-gdb/bin:/home/henrik/.espressif/tools/xtensa-esp32-elf/esp-2022r1-11.2.0/xtensa-esp32-elf/bin:/home/henrik/.espressif/tools/xtensa-esp32s2-elf/esp-2022r1-11.2.0/xtensa-esp32s2-elf/bin:/home/henrik/.espressif/tools/xtensa-esp32s3-elf/esp-2022r1-11.2.0/xtensa-esp32s3-elf/bin:/home/henrik/.espressif/tools/riscv32-esp-elf/esp-2022r1-11.2.0/riscv32-esp-elf/bin:/home/henrik/.espressif/tools/esp32ulp-elf/2.35_20220830/esp32ulp-elf/bin:/home/henrik/.espressif/tools/cmake/3.24.0/bin:/home/henrik/.espressif/tools/openocd-esp32/v0.11.0-esp32-20220706/openocd-esp32/bin:/home/henrik/.espressif/tools/ninja/1.10.2",
+    "idf.customExtraVars": "{\"OPENOCD_SCRIPTS\":\"/home/henrik/.espressif/tools/openocd-esp32/v0.11.0-esp32-20220706/openocd-esp32/share/openocd/scripts\"}",
+    "idf.espIdfPath": "/home/henrik/esp/esp-idf",
+    "idf.openOcdConfigs": [
+        "board/esp32-wrover-kit-3.3v.cfg"
+    ],
+    "idf.port": "/dev/ttyUSB0",
+    "idf.pythonBinPath": "/home/henrik/.espressif/python_env/idf5.0_py3.10_env/bin/python",
+    "idf.toolsPath": "/home/henrik/.espressif",
+    "files.associations": {
+        "esp_camera.h": "c",
+        "nvs_flash.h": "c",
+        "esp_system.h": "c",
+        "err.h": "c",
+        "opt.h": "c",
+        "lwipopts.h": "c",
+        "protocol_examples_common.h": "c",
+        "camera_pins.h": "c"
+    },
+    "idf.flashType": "UART"
+}
