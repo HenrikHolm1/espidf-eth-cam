@@ -43,6 +43,149 @@ static const char* _STREAM_PART_BMP  = "Content-Type: image/bmp\r\nContent-Lengt
 
 #define CONFIG_XCLK_FREQ 20000000 
 
+const char index_html[] = \
+"<!DOCTYPE HTML><html>\r\n"\
+"<head></head>\r\n"\
+"<body>\r\n"\
+"  <div><img src=\"caption\" id=\"photo\" width=\"70%\"></div>\r\n"\
+"</body>\r\n"\
+"</html>";
+
+#if REMARKED
+/*
+const char index_html_xxx[] =
+"<!DOCTYPE HTML><html>"
+"<head>"
+"</head>"
+<html>
+<body>
+<div id="video">
+<img src='image1.jpg' width='1000' height='500' id="image"></img>
+</div>
+<script>
+window.onload = refreshBlock;
+function refreshBlock()
+{
+    document.getElementById("image").src="image4.jpg";
+    setTimeout("refreshBlock",1000);
+}
+</script>
+</body>
+</html>
+*/
+
+"<head>"
+"<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+"<style>"
+"* {box-sizing: border-box;}"
+"body {font-family: Verdana, sans-serif;}"
+".mySlides {display: none;}"
+"img {vertical-align: middle;}"
+
+".slideshow-container {"
+  "max-width: 1000px;"
+  "position: relative;"
+  "margin: auto;"
+"}"
+
+".text {"
+  "color: #f2f2f2;"
+  "font-size: 15px;"
+  "padding: 8px 12px;"
+  "position: absolute;"
+  "bottom: 8px;"
+  "width: 100%;"
+  "text-align: center;"
+"}"
+
+".numbertext {"
+  "color: #f2f2f2;"
+  "font-size: 12px;"
+  "padding: 8px 12px;"
+  "position: absolute;"
+  "top: 0;"
+"}"
+
+"@media only screen and (max-width: 300px) {"
+  ".text {font-size: 11px}"
+"}"
+"</style>"
+"</head>"
+"<body>"
+
+"<h2>Automatic Slideshow</h2>"
+"<p>Change image every 2 seconds:</p>"
+
+"<div class=\"slideshow-container\">"
+
+"<div class=\"mySlides\">"
+  "<div class=\"numbertext\">1 / 3</div>"
+  "<img src=\"caption.jpg\" style=\"width:100%\">"
+  "<div class=\"text\">Caption Text</div>"
+"</div>"
+
+"</div>"
+"<br>"
+
+"<script>"
+"let slideIndex = 0;"
+"showSlides();"
+
+"function showSlides() {"
+  "let i;"
+  "let slides = document.getElementsByClassName(\"mySlides\");"
+  "for (i = 0; i < slides.length; i++) {"
+    "slides[i].style.display = \"none\";"
+  "}"
+  "slideIndex++;"
+  "if (slideIndex > slides.length) {slideIndex = 1}"
+  "slides[slideIndex-1].style.display = \"block\";"
+  "setTimeout(showSlides, 2000);" // Change image every 2 seconds
+"}"
+"</script>"
+
+"</body>"
+"</html>)";
+
+"<head>"
+  "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+  "<style>"
+    "body { text-align:center; }"
+    ".vert { margin-bottom: 10%; }"
+    ".hori{ margin-bottom: 0%; }"
+  "</style>"
+"</head>"
+"<body>"
+  "<div id=\"container\">"
+    "<h2>ESP32-CAM Last Photo</h2>"
+    "<p>It might take more than 5 seconds to capture a photo.</p>"
+    "<p>"
+      "<button onclick=\"rotatePhoto();\">ROTATE</button>"
+      "<button onclick=\"capturePhoto()\">CAPTURE PHOTO</button>"
+      "<button onclick=\"location.reload();\">REFRESH PAGE</button>"
+    "</p>"
+  "</div>"
+  "<div><img src=\"saved-photo\" id=\"photo\" width=\"70%\"></div>"
+"</body>"
+"<script>"
+  "var deg = 0;"
+  "function capturePhoto() {"
+    "var xhr = new XMLHttpRequest();"
+    "xhr.open('GET', \"/capture\", true);"
+    "xhr.send();"
+  "}"
+  "function rotatePhoto() {"
+    "var img = document.getElementById(\"photo\");"
+    "deg += 90;"
+    "if(isOdd(deg/90)){ document.getElementById(\"container\").className = \"vert\"; }"
+    "else{ document.getElementById(\"container\").className = \"hori\"; }"
+    "img.style.transform = \"rotate(\" + deg + \"deg)\";"
+  "}"
+  "function isOdd(n) { return Math.abs(n % 2) == 1; }"
+"</script>"
+"</html>)";
+#endif
+
 static esp_err_t init_camera(void)
 {
     camera_config_t camera_config = {
@@ -68,7 +211,8 @@ static esp_err_t init_camera(void)
         .ledc_timer = LEDC_TIMER_0,
         .ledc_channel = LEDC_CHANNEL_0,
 
-        .pixel_format = PIXFORMAT_RGB565, //= PIXFORMAT_JPEG,
+        .pixel_format = PIXFORMAT_RGB565,
+        //.pixel_format = PIXFORMAT_JPEG,
         .frame_size = FRAMESIZE_96X96, //= FRAMESIZE_QVGA, //FRAMESIZE_VGA,
 
         .jpeg_quality = 10, //0-63, for OV series camera sensors, lower number means higher quality
@@ -84,22 +228,108 @@ static esp_err_t init_camera(void)
     return ESP_OK;
 }
 
-void putpixel(camera_fb_t *fb, size_t x, size_t y, uint16_t c){
-    fb->buf[(y*fb->width + x)*2] = c;
+
+#define TO_LITTLE_ENDOAN(c) (((uint16_t)c >> 8) | ((uint16_t)c << 8))
+
+//rrrr rggg gggb bbbb
+#define COL_BLUE  TO_LITTLE_ENDOAN(0x001f)
+#define COL_GREEN TO_LITTLE_ENDOAN(0x07e0)
+#define COL_RED   TO_LITTLE_ENDOAN(0xf800)
+
+void putpixel_rgb565(camera_fb_t *fb, int x, int y, uint16_t c){
+    //*(uint16_t*)&fb->buf[(y*fb->width + x)*2] = c;
+    ((uint16_t*)fb->buf)[(y*fb->width + x)] = c;
 }
 
-void drawCircle(camera_fb_t *fb, size_t xc, size_t yc, size_t x, size_t y, uint16_t c)
+void drawCirclePart(camera_fb_t *fb, int xc, int yc, int x, int y, uint16_t c)
 {
-	putpixel(fb, xc+x, yc+y, c);
-	putpixel(fb, xc-x, yc+y, c);
-	putpixel(fb, xc+x, yc-y, c);
-	putpixel(fb, xc-x, yc-y, c);
-	putpixel(fb, xc+y, yc+x, c);
-	putpixel(fb, xc-y, yc+x, c);
-	putpixel(fb, xc+y, yc-x, c);
-	putpixel(fb, xc-y, yc-x, c);
+	putpixel_rgb565(fb, xc+x, yc+y, c);
+	putpixel_rgb565(fb, xc-x, yc+y, c);
+	putpixel_rgb565(fb, xc+x, yc-y, c);
+	putpixel_rgb565(fb, xc-x, yc-y, c);
+	putpixel_rgb565(fb, xc+y, yc+x, c);
+	putpixel_rgb565(fb, xc-y, yc+x, c);
+	putpixel_rgb565(fb, xc+y, yc-x, c);
+	putpixel_rgb565(fb, xc-y, yc-x, c);
 }
 
+void drawCircle(camera_fb_t *fb, int xc, int yc, int r, uint16_t c){
+    int x = 0;
+    int y = r;
+    int d = 3-(2*r);
+    drawCirclePart(fb, xc, yc, x, y, c);
+    while (y >= x){
+        x++;
+        if (d > 0){
+            y--;
+            d = d + 4 * (x - y) + 10;
+        }else{
+            d = d + 4 * x + 6;
+        }
+        drawCirclePart(fb, xc, yc, x, y, c);
+    }
+}
+
+esp_err_t get_index_html_handler(httpd_req_t *req)
+{
+    int response;
+    response = httpd_resp_send(req, index_html, HTTPD_RESP_USE_STRLEN);
+    return response;
+}
+
+esp_err_t jpg_httpd_handler(httpd_req_t *req){
+    camera_fb_t * fb = NULL;
+    esp_err_t res = ESP_OK;
+    size_t _buf_len;
+    uint8_t * _buf;
+    size_t fb_len = 0;
+    int64_t fr_start = esp_timer_get_time();
+
+    fb = esp_camera_fb_get();
+    if (!fb) {
+        ESP_LOGE(TAG, "Camera capture failed");
+        httpd_resp_send_500(req);
+        return ESP_FAIL;
+    }
+    res = httpd_resp_set_type(req, "image/jpg");
+    if(res == ESP_OK){
+        res = httpd_resp_set_hdr(req, "Content-Disposition", "inline; filename=capture.jpg");
+        //Cache-Control: no-cache, must-revalidate
+    }
+
+    if(res == ESP_OK){
+
+        if(fb->format != PIXFORMAT_JPEG){
+            ESP_LOGI(TAG, "CAM_NJPG: pf: %u, l: %u, w: %u, h: %u", fb->format, fb->len, fb->width, fb->height);
+            //drawCircle(fb, 48, 48, 10, COL_RED);
+#if USE_JPEG
+            bool jpeg_converted = frame2jpg(fb, 99, &_buf, &_buf_len);
+            if(!jpeg_converted){
+                ESP_LOGE(TAG, "JPEG compression failed");
+                esp_camera_fb_return(fb);
+                res = ESP_FAIL;
+            }
+#else
+            bool bmp_converted = frame2bmp(fb, &_buf, &_buf_len);
+            if(!bmp_converted){
+                ESP_LOGE(TAG, "BMP generation failed");
+                esp_camera_fb_return(fb);
+                res = ESP_FAIL;
+            }
+#endif
+        }else{
+            ESP_LOGI(TAG, "CAM_JPG: pf: %u, l: %u, w: %u, h: %u", fb->format, fb->len, fb->width, fb->height);
+            _buf_len = fb->len;
+            _buf = fb->buf;
+        }
+
+        res = httpd_resp_send(req, (const char *)_buf, _buf_len);
+    }
+    esp_camera_fb_return(fb);
+    int64_t fr_end = esp_timer_get_time();
+    ESP_LOGI(TAG, "JPG: %luKB %lums", (uint32_t)(fb_len/1024), (uint32_t)((fr_end - fr_start)/1000));
+    return res;
+}
 
 esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
     camera_fb_t * fb = NULL;
@@ -117,18 +347,6 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
         return res;
     }
 
-    uint16_t c = 0xf800; //rrrr rggg gggb bbbb
-    c=0x001f; //blue
-    c=0x07e0; //green
-    //c=0x07e0; //red
-    //c=0xffff; //yellow!
-
-    int xc = 48; //fb->width/2;
-    int yc = 48; //fb->height/2;
-    int r = 10;
-    int d;
-
-    c = (c >> 8) | (c << 8); //to little endian
     while(true){
         fb = esp_camera_fb_get();
         if (!fb) {
@@ -137,35 +355,7 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
             break;
         }
         if(fb->format != PIXFORMAT_JPEG){
-            ESP_LOGI(TAG, "pf: %u, l: %u, w: %u, h: %u, xc: %d, yc: %d, r: %u", fb->format, fb->len, fb->width, fb->height, xc, yc, r);
-            size_t x = 0;
-            size_t y = r;
-            d = 3-(2*r);
-
-	        drawCircle(fb, xc, yc, x, y, c);
-	        while (y >= x)
-	        {
-        		// for each pixel we will
-		        // draw all eight pixels
-		
-        		x++;
-
-        		// check for decision parameter
-        		// and correspondingly
-        		// update d, x, y
-        		if (d > 0){
-        			y--;
-		        	d = d + 4 * (x - y) + 10;
-        		}else{
-        			d = d + 4 * x + 6;
-                }
-		        drawCircle(fb, xc, yc, x, y, c);
-            }
-            //for(int x=0;x<fb->width;x++){
-            //    for(int y=0;y<10;y++){
-            //        putpixel(fb,x,y,c);
-            //    }
-            //}
+            ESP_LOGI(TAG, "pf: %u, l: %u, w: %u, h: %u", fb->format, fb->len, fb->width, fb->height);
 #if USE_JPEG
             bool jpeg_converted = frame2jpg(fb, 99, &_buf, &_buf_len);
             if(!jpeg_converted){
@@ -224,22 +414,29 @@ esp_err_t jpg_stream_httpd_handler(httpd_req_t *req){
 httpd_uri_t uri_get = {
     .uri = "/",
     .method = HTTP_GET,
-    .handler = jpg_stream_httpd_handler,
+    .handler = get_index_html_handler,
+    .user_ctx = NULL};
+
+httpd_uri_t uri_get_caption = {
+    .uri = "/caption",
+    .method = HTTP_GET,
+    .handler = jpg_httpd_handler,
     .user_ctx = NULL};
 
 httpd_handle_t setup_server(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    httpd_handle_t stream_httpd  = NULL;
+    httpd_handle_t server  = NULL;
 
-    if (httpd_start(&stream_httpd , &config) == ESP_OK)
-    {
-        httpd_register_uri_handler(stream_httpd , &uri_get);
+    if (httpd_start(&server, &config) == ESP_OK){
+        httpd_register_uri_handler(server, &uri_get);
+        httpd_register_uri_handler(server, &uri_get_caption);
     }
 
-    return stream_httpd;
+    return server;
 }
 
+/*
 #define PORT                        CONFIG_EXAMPLE_PORT
 #define KEEPALIVE_IDLE              CONFIG_EXAMPLE_KEEPALIVE_IDLE
 #define KEEPALIVE_INTERVAL          CONFIG_EXAMPLE_KEEPALIVE_INTERVAL
@@ -370,6 +567,7 @@ CLEAN_UP:
     close(listen_sock);
     vTaskDelete(NULL);
 }
+*/
 
 void app_main(void)
 {
