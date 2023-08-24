@@ -48,6 +48,12 @@ const char index_html[] = \
 "<head></head>\r\n"\
 "<body>\r\n"\
 "  <div><img src=\"caption\" id=\"photo\" width=\"70%\"></div>\r\n"\
+"<script>"
+"setInterval(function() {"
+    "var ie = document.getElementById(\"photo\");"
+    "ie.src = \"caption.jpg?rand=\" + Math.random();"
+"}, 2000);"
+"</script>"
 "</body>\r\n"\
 "</html>";
 
@@ -418,7 +424,7 @@ httpd_uri_t uri_get = {
     .user_ctx = NULL};
 
 httpd_uri_t uri_get_caption = {
-    .uri = "/caption",
+    .uri = "/caption*",
     .method = HTTP_GET,
     .handler = jpg_httpd_handler,
     .user_ctx = NULL};
@@ -427,6 +433,7 @@ httpd_handle_t setup_server(void)
 {
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server  = NULL;
+    config.uri_match_fn = httpd_uri_match_wildcard;
 
     if (httpd_start(&server, &config) == ESP_OK){
         httpd_register_uri_handler(server, &uri_get);
