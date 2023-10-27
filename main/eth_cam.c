@@ -247,9 +247,8 @@ void putpixel_rgb565(camera_fb_t *fb, int x, int y, uint16_t c){
     ((uint16_t*)fb->buf)[(y*fb->width + x)] = c;
 }
 
-void drawCirclePart(camera_fb_t *fb, int xc, int yc, int x, int y, uint16_t c)
-{
-	putpixel_rgb565(fb, xc+x, yc+y, c);
+void draw_circle_parts(camera_fb_t *fb, int xc, int yc, int x, int y, uint16_t c){
+    putpixel_rgb565(fb, xc+x, yc+y, c);
 	putpixel_rgb565(fb, xc-x, yc+y, c);
 	putpixel_rgb565(fb, xc+x, yc-y, c);
 	putpixel_rgb565(fb, xc-x, yc-y, c);
@@ -259,11 +258,28 @@ void drawCirclePart(camera_fb_t *fb, int xc, int yc, int x, int y, uint16_t c)
 	putpixel_rgb565(fb, xc-y, yc-x, c);
 }
 
-void drawCircle(camera_fb_t *fb, int xc, int yc, int r, uint16_t c){
+void draw_circle_midpoint(camera_fb_t *fb, int xc, int yc, int r, uint16_t c){
+    int x = r;
+    int y = 0;
+    int err = 0;
+    while (x >= y){
+        draw_circle_parts(fb, xc, yc, x, y, c);
+        if (err <= 0){
+          y += 1;
+          err += 2*y + 1;
+        }
+        if (err > 0){
+          x -= 1;
+          err -= 2*x + 1;
+        }
+    }
+}
+
+void draw_circle_delta(camera_fb_t *fb, int xc, int yc, int r, uint16_t c){
     int x = 0;
     int y = r;
     int d = 3-(2*r);
-    drawCirclePart(fb, xc, yc, x, y, c);
+    draw_circle_parts(fb, xc, yc, x, y, c);
     while (y >= x){
         x++;
         if (d > 0){
@@ -272,7 +288,7 @@ void drawCircle(camera_fb_t *fb, int xc, int yc, int r, uint16_t c){
         }else{
             d = d + 4 * x + 6;
         }
-        drawCirclePart(fb, xc, yc, x, y, c);
+        draw_circle_parts(fb, xc, yc, x, y, c);
     }
 }
 
@@ -307,7 +323,7 @@ esp_err_t jpg_httpd_handler(httpd_req_t *req){
 
         if(fb->format != PIXFORMAT_JPEG){
             ESP_LOGI(TAG, "CAM_NJPG: pf: %u, l: %u, w: %u, h: %u", fb->format, fb->len, fb->width, fb->height);
-            //drawCircle(fb, 48, 48, 10, COL_RED);
+            //draw_circle_midpoint(fb, 48, 48, 10, COL_RED);
 #if USE_JPEG
             bool jpeg_converted = frame2jpg(fb, 99, &_buf, &_buf_len);
             if(!jpeg_converted){
