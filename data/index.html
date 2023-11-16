@@ -1,0 +1,2513 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <style type="text/css">
+      canvas {
+       border: 1px solid black;
+      }
+
+      button.x {
+        position: relative;
+        display: inline-block;
+        height: 134px;
+        padding: 0;
+        margin: 0;
+        vertical-align: top;
+        background-image: url(images/Tv2.png);
+        background-size: 75px 75px;
+        width: 104px;
+      }
+    
+      table.sp {
+        border-collapse: collapse;
+        border: 3px solid #000000;
+        letter-spacing: 0px;
+        font-family: Arial;
+        font-size: 0.8rem;
+        color: #000000;
+        text-align: center;
+      }
+      table.sp td, table.sp th {
+        border: 1px solid #000000;
+      }
+      table.sp thead {
+        background: #CFCFCF;
+        border-bottom: 3px solid #000000;
+      }
+      table.sp thead th {
+        font-size: 15px;
+      }
+      table.sp tfoot {
+        color: #000000;
+      }
+      table.sp tfoot td {
+        font-size: 14px;
+      }
+      table.sp tbody {
+        border:0;
+      }
+      table.sp tr {
+        height:auto;
+        border:0px;
+      }
+      table.rgb td {
+        width:33%;
+        height:100%;
+        padding:0px;
+      }
+      table.rgb_i td {
+        width:33%;
+        border:0px;
+        padding:0px;
+        margin:0px;
+      }
+      table.rgb, table.rgb_i {
+        width: 100%;
+      }
+      .try_red, .try_green, .try_blue {
+        color:white;
+        text-align:right;
+        width: 64px;
+        padding:0px; 
+        margin:0px;
+      }
+      .try_red {
+        background:red;
+      }
+      .try_green {
+        background:green;
+      }
+      .try_blue {
+        background:blue;
+      }
+      .try_center, .try_spot_id{
+        text-align:center;
+        padding-right:4px;
+        padding-left:4px;
+      }
+      .try_right {
+        text-align:right;
+      }
+      .try_spot_id{
+        height:1px;
+      }
+
+      .try_width{
+        width: 100%; 
+        box-sizing: border-box;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing: border-box;
+      }
+      .try_width_28{
+        width: 245px;
+        text-align: left;
+      }
+      .try_width_right{
+        width: 100%; 
+        box-sizing: border-box;
+        -webkit-box-sizing:border-box;
+        -moz-box-sizing: border-box;
+        text-align:right;
+      }
+      .selectx{
+        background: #EEEEEE;
+        border-width: 100%;
+        width: 100%;
+        flex: 1;
+      }
+      .canvasesdiv{
+        --testw: 700px;
+        --testh: 700px;
+        position:relative;
+        width: var(--testw); 
+        height: var(--testh);
+      }
+      .spot_id_th_btn, .spot_id_btn{
+        width: 100%;
+        margin: 0px;
+      }
+      .spot_id_th_btn{
+        background: #CFCFCF;
+      }
+      .spot_id_btn{
+        background: #EEEEEE;
+      }
+      div { display: table; }
+      div.t {
+        display: table-cell;
+        width: 100%;
+      }
+      div.t > input {
+        width: 96%;
+      }
+      div.tx > span {
+        width: 33%;
+      }
+      .preference {
+        display: flex;
+        /*justify-content: space-between;*/
+        width: 200px;
+        border: 0px;
+        border-width: 0;
+      }
+      .grid-container {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 0px;
+        background-color: white;
+        padding: 0px;
+      }
+      .grid-container > div {
+        background-color: white;
+        text-align: left;
+        padding: 0px 0;
+        font-size: 17px;
+      }
+    </style>
+    <meta charset="utf-8" />
+    <title>My test page</title>
+  </head>
+<body>
+  <section style="border-width:10px; border-style:solid; border-color:white;">
+  <!--<section style="border-width:10px;">-->
+      <div class="canvasesdiv" id="canvasesdiv">
+      <canvas id="layer1" style="z-index: 1; position:absolute; left:0px; top:0px;">
+        This text is displayed if your browser does not support HTML5 Canvas.
+      </canvas>
+      <canvas id="layer2" style="z-index: 2; position:absolute; left:0px; top:0px;">
+        This text is displayed if your browser does not support HTML5 Canvas.
+      </canvas>
+    </div>
+  </section>
+  <section style="border-width:10px; border-style:solid; border-color:blue;">
+
+    <div class="grid-container">
+      <div>Picture scale:</div>
+      <div>Picture speed:</div>
+      <div style="width: 100%; overflow: hidden;">
+        <!--<div style="width: 150px; float:left; border: 1px solid red;">-->
+        <div style="width: 150px; float:left;">
+            <input type="range" id="canvas_scale" name="canvas_scale" list="markers" value="3" min="1" max="5"/>
+        </div>
+        <!--<div style="width: 2em; float:left; border: 1px solid cyan;">-->
+        <div style="width: 2em; float:left;">
+            <label style="display: block; text-align: center; line-height: 100%;" id="scale_factor_text">x3</label>
+        </div>
+      </div>
+      <div style="width: 100%; overflow: hidden;">
+        <div style="float:left; display: block; line-height: 100%;">
+          <input type="range" id="canvas_period" name="canvas_period" onchange="show_period(this.value)" oninput="show_period(this.value)" step="20" value="40" min="40" max="2000"/>
+        </div>
+        <div style="width: 5em; text-align:left; float:left;">
+          <label style="display: block; text-align: center; line-height: 100%;"><label id="picture_period">40 ms</label></label>
+        </div>
+      </div>
+    </div>
+    <datalist id="markers">
+      <option value="1"></option>
+      <option value="2"></option>
+      <option value="3"></option>
+      <option value="4"></option>
+      <option value="5"></option>
+    </datalist>
+  </section>
+  <section style="border-width:10px; border-style:solid; border-color:white;">
+    <table class="sp">
+      <tr>
+        <th style="width:252px;"><label>Profile select:</label></th>
+        <th style="width:150px;"><label>Actions:</label></th>
+      </tr>
+      <tr style="vertical-align: top;">
+        <td id="profile_list_offset">
+          <ul id="profile_list" style="margin:0px;padding:0px;"></ul>
+        </td>
+        <td>
+          <button style="width:100%;" id='new_profile'  type='button' onclick='profile_btn__new()'    >New</button>
+          <button style="width:100%;" id='use_profile'  type='button' onclick='profile_btn__use()'    >Use</button>
+          <button style="width:100%;" id='sync_profile' type='button' onclick='sync_profile_btn_fn()' >Sync with server</button>
+          <button style="width:100%;" id='del_profile'  type='button' onclick='del_profile_btn_fn()'  >Delete</button>
+        </td>
+      </tr>
+    </table>
+    <div id="general_status" style="width:100%;">
+      <label id="general_status">GENERAL STATUS</label>
+    </div>
+    <div id="profile_status_offset" style="width: 100%; overflow: hidden;">
+      <div id="profile_status"></div>
+      </div>
+</section>
+  <section style="border-width:10px; border-style:solid; border-color:white;">
+    <table id="spot_table" class="sp">
+    <thead>
+      <tr>
+        <th align='center' style="margin: 0px; padding: 0px;">
+        <button class="spot_id_th_btn" id='Spot_id_all_btn' type='button' onclick='spot_id_btn_all_fn(id,this)' >Spot id</button>
+        </th>
+        <th width="300px">Signal name</th>
+        <th width="65px">Filter</th>
+        <th width="205px">Current measurement</th>
+        <th width="205px">Min value</th>
+        <th width="205px">Max value</th>
+        <th width="52px">Result</th>
+      </tr>
+      </thead>
+      <tfoot>
+      </tfoot>
+      <tbody id="spot_table_tbody">
+      </tbody>
+    </table>
+  </section>
+</body>
+<script>
+
+  function print_to_status(text){
+    let e = document.getElementById("general_status");
+    e.innerHTML = "STATUS: " + text;
+  }
+
+  function decodeEntities(s){
+    var str, temp= document.createElement('p');
+    temp.innerHTML= s;
+    str= temp.textContent || temp.innerText;
+    temp=null;
+    return str;
+  }
+
+  const STATUS_USE_SET_TO = "(Use profile) Set to ";
+  const STATUS_CURRENT_WORK_NOT_YET_SAVED = "Current work has not been saved to a profile.";
+  const STATUS_NO_PROFILE_HIGHLIGHTED = "No profiles has been highlighted.";
+  const STATUS_INSERT_NAME_OF_NEW_PROFILE = "(New profile): Insert name of new profile.";
+  const STATUS_NEW_PROFILE_ANONYMOUS = "(New profile): Please save current work in a new profile.";
+  const STATUS_PROFILE_CREATED_WITH_SUCCESS = "New profile was created with success.";
+  const STATUS_PROFILE_SELECTED = "Profile selected.";
+  const STATUS_NEW_PROFILE_CANCELED = "(New profile): Canceled."
+  const STATUS_DELETE_SUCCESS = "Deleted with success.";
+  const STATUS_NOTHING_CHECKED_NOTHING_DELETED = "Nothing is checked so nothing was deleted.";
+  const STATUS_NOTHING_TO_DELETE = "Nothing to delete.";
+  const STATUS_SYNC_WITH_SERVER = "Synchronizing with server please wait...";
+  const STATUS_SYNC_CANCELED = "Synchronizing canceled.";
+  const STATUS_SYNC_SUCCESS = "Synchronized with success.";
+  const STATUS_RENAME_SUCCESS = "(Rename): Done with success.";
+  const STATUS_RENAME_CANCLED = "(Rename): Canceled.";
+  const STATUS_RENAME_NOT_SURE = "(Rename): Was this a rename?";
+  const STATUS_ERROR_PROFIFLE_EXISTS_III = "(Sync with server): Renamed name exists locally.";
+  const STATUS_ERROR_PROFIFLE_EXISTS_II = "(Sync with server): Renamed name exists on server.";
+  const STATUS_ERROR_PROFIFLE_EXISTS = "(Sync with server): Name exists on server.";
+  const STATUS_ERROR_SYNC = "Error: Could not Synchronize with server.";
+  const STATUS_ERROR_PROFILE_OVERWRITE = "Error: Could not overwrite profile on server.";
+  const STATUS_ERROR_PROFILE = "Error: Could not get profile from server.";
+  const STATUS_ERROR_FILE_EXISTS_ON_SERVER = "Error profile exists on server.";
+  const STATUS_ERROR_RENAME = "(Rename): Error.";
+  const STATUS_ERROR_RENAME_PROFILE_EXISTS = "(Rename): Error a profile exists.";
+  const STATUS_ERROR_DELETE = "Error: Could not delete.";
+  const STATUS_ERROR_USE_NO_PROFILE = "(Use profile) No profile is selected ";
+  const STATUS_ERROR_USE_NOT_SAVED = "(Use profile) Could not save on server ";
+  const STATUS_ERROR_USE_NOT_SET = "(Use profile) Could not set profile ";
+  
+  
+  const SPOT_ID_BTN_COLOR_ALL_ACTIVE = "cyan";
+  const SPOT_ID_BTN_COLOR_ALL_UNACTIVE = "#CFCFCF";
+  const SPOT_ID_BTN_COLOR_ACTIVE = "cyan";
+  const SPOT_ID_BTN_COLOR_UNACTIVE = "#EEEEEE";
+
+  const SPOT_INITIAL_CIRCLE_COORD_X = 200;
+  const SPOT_INITIAL_CIRCLE_COORD_Y = 300;
+  const SPOT_INITIAL_CIRCLE_COORD_R = 23;
+  const SPOT_INITIAL_CANVAS_SCALE = 3; //3x of received picutre
+
+  const DEFAULT_PIC_PERIOD = 2000;
+
+
+  //GLOBALS:
+  var uid;
+  var layer1;
+  var layer2;
+  var layer3;
+  var ctx1;
+  var ctx2;
+  var ctx3;
+  var cir;
+  var old_spot_x;
+  var old_spot_y;
+  var spots;
+  var canvas_scale = SPOT_INITIAL_CANVAS_SCALE;
+  var spotSelected = false;
+  var hasMoved = false;
+  var take_bitmap;
+  var take_width = 0;
+  var take_height = 0;
+  var forbid = 0;
+  var cir;
+  var exp_cnt = 0;
+  var pic_period = DEFAULT_PIC_PERIOD;
+
+  let e = document.getElementById("canvas_period");
+  e.value = DEFAULT_PIC_PERIOD;
+
+//******************************************************************************************
+//******************************************************************************************
+//  ___       _ _   
+// |_ _|_ __ (_) |_ 
+//  | || '_ \| | __|
+//  | || | | | | |_ 
+// |___|_| |_|_|\__|
+//******************************************************************************************
+//******************************************************************************************
+function init(){ //TODO change to name reset()
+    console.log("init()");
+
+    layer1 = document.getElementById("layer1");
+    ctx1 = layer1.getContext("2d");
+    layer2 = document.getElementById("layer2");
+    ctx2 = layer2.getContext("2d");
+
+    //let e = document.getElementById("profile_name");
+    //e.value = current_profile;
+
+    uid = 1;
+
+    cir   = new ExtendedCircle(0, 
+      SPOT_INITIAL_CIRCLE_COORD_X,
+      SPOT_INITIAL_CIRCLE_COORD_Y,
+      SPOT_INITIAL_CIRCLE_COORD_R, 
+      "rgba(255, 0, 0, 255)");
+    spots = new Spots();
+    spots.add_DOM_table_functions(appendColumn, delete_column);
+
+    layer2.addEventListener("wheel",     update_cursor_circle_circumference, {passive: false});
+    layer2.addEventListener("mousedown", set_move_or_create_spot,            {passive: false});
+    layer2.addEventListener("mousemove", move_cursor_circle,                 {passive: false});
+
+    let tbl = document.getElementById("spot_table_tbody");
+    for(var i = 0;i<tbl.rows.length;){
+      tbl.deleteRow(i);
+    }
+
+    //take_a_picture_new();
+  }
+
+  var pic_timer = async function(){
+    const size = await fetch("picsize.json")
+      .then((response) => response.json())
+      .catch(error => {
+        console.error(error.message);
+      })
+    console.log("s:", size);
+    const pic  = await fetch('/images/f2.bin?rand=\"' + Math.random(), {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+        responseType: "arraybuffer"
+      })
+      .then((response) => response.arrayBuffer())
+      .catch(error => {
+        console.error(error.message);
+      })
+    console.log("p");
+    take_a_picture_new(parseInt(size.h), parseInt(size.w), pic);
+    filter_on_spots();
+    setTimeout(pic_timer, pic_period);
+  }
+  setTimeout(pic_timer, pic_period);
+
+  function take_a_picture_new(size_h, size_w, pic){
+    let slider_scale = document.getElementById("canvas_scale").value;
+    scale_chg = Boolean(slider_scale != canvas_scale);
+    if(scale_chg){
+      e_text = document.getElementById("scale_factor_text");
+      e_text.innerHTML = 'x' + slider_scale;
+      console.log("e_Text", e_text.innerHTML);
+    }
+    if (size_w != take_width || size_h != take_height || scale_chg) {
+      canvas_scale = slider_scale;
+      let hh = Math.round(size_w * canvas_scale);
+      let ww = Math.round(size_w * canvas_scale);
+      layer1.width = ww;
+      layer1.height  = hh;
+      layer2.width = ww;
+      layer2.height = hh;
+      take_width = size_w;
+      take_height = size_h;
+
+      let e = document.getElementById("canvasesdiv");
+      e.style.setProperty("--testw", ww.toString() + "px");
+      e.style.setProperty("--testh", hh.toString() + "px");
+      console.log("new take_bitmap canvas: ", size_h, size_w);
+      scale_chg = true;
+    }
+    let data = new Uint16Array(pic);
+    //console.log("data:", data[0].toString(16));
+    take_bitmap = new Bitmap(size_w, size_h, data, PixelType.RGB_565_LE, 0);
+    //                                                                ^ 
+    // NOTE: Uint16Array endianness is according to the CPU. In my case: little endian!
+    //       The picture is actually in big endian
+    take_bitmap.show_on_canvas(ctx1);
+    if(scale_chg){
+      ctx2.font = "30px Arial";
+      ctx2.fillStyle = "cyan";
+      let line_height = parseInt(ctx2.font.match(/\d+/), 10);
+      for(let sp of spots.iterate()){
+        let c = calc_win_coords(sp.co, take_bitmap, layer1);
+        sp.x = c.x;
+        sp.y = c.y;
+        sp.r = c.r;
+        let line_width  = ctx2.measureText(sp.id.toString()).width;
+        sp.text_x = sp.x - line_width/2;
+        sp.text_y = sp.y + (line_height/2) - 3;
+      }
+      draw_spots_and_circle(spots, cir);
+    }
+  };
+
+  function show_period(period){
+    let e = document.getElementById("picture_period");
+    e.innerHTML = period + " ms";
+    pic_period = period;
+  }
+  
+  function check_rgb_values(id_str, rval, gval, bval){
+    let rgbArr = get_rgb_elements(id_str).map((e) => e.value);
+    if(rgbArr[0] < 0){rgbArr[0] = rval;}
+    if(rgbArr[1] < 0){rgbArr[1] = gval;}
+    if(rgbArr[2] < 0){rgbArr[2] = bval;}
+    if(rgbArr[3] < 0){rgbArr[3] = rval;}
+    if(rgbArr[4] < 0){rgbArr[4] = gval;}
+    if(rgbArr[5] < 0){rgbArr[5] = bval;}
+    let rbit = Boolean(rval >= rgbArr[0] && rval <= rgbArr[3])
+    let gbit = Boolean(gval >= rgbArr[1] && gval <= rgbArr[4])
+    let bbit = Boolean(bval >= rgbArr[2] && bval <= rgbArr[5])
+    let res  = Boolean(rbit && gbit && bbit);
+    e = document.getElementById("res" + id_str);
+    e.innerHTML = res.toString();
+  }
+
+  function filter_on_spots(){
+    let e;
+    for (let sp of spots.iterate()){
+      let s = sp.id.toString();
+      e = document.getElementById("filter" + s);
+      switch(Number(e.value)){
+        case FilterType.RMS:{
+          objfn = new CalcRMSonRGBpixels(take_bitmap);
+          sp.tm.calc_rms_inside_circle(sp.co.x, sp.co.y, take_bitmap.w, objfn);
+          let rms = objfn.get_value();
+          document.getElementById("rms_val" + s).innerHTML = rms.toString();
+
+          let rms_min = document.getElementById("rms_min" + s).value;
+          let rms_max = document.getElementById("rms_max" + s).value;
+          if(rms_min < 0){rms_min = rms;}
+          if(rms_max < 0){rms_max = rms;}
+          let res = Boolean(rms >= rms_min && rms <= rms_max);
+
+          e = document.getElementById("res" + s);
+          e.innerHTML = res.toString();
+          break;
+        }
+        case FilterType.RGB:{
+          objfn = new CalcRMSonSeparateRGBpixels(take_bitmap);
+          sp.tm.calc_rms_inside_circle(sp.co.x, sp.co.y, take_bitmap.w, objfn);
+          let [rval, gval, bval] = objfn.get_values();
+          document.getElementById("rgb_val_r" + s).innerHTML = rval.toString();
+          document.getElementById("rgb_val_g" + s).innerHTML = gval.toString();
+          document.getElementById("rgb_val_b" + s).innerHTML = bval.toString();
+          check_rgb_values(s, rval, gval, bval);
+          Array.from(document.getElementsByName("alias" + s)).map(function (e){
+            check_rgb_values(e.id, rval, gval, bval);
+          });
+          break;
+        }
+        default:{
+          let text = e.options[e.selectedIndex].text;
+          console.log("FilterType: " + text + " not yet implemented");
+          break;
+        }
+      }
+    }
+  }
+
+//******************************************************************************************
+//******************************************************************************************
+//  ____             __ _ _           
+// |  _ \ _ __ ___  / _(_) | ___  ___ 
+// | |_) | '__/ _ \| |_| | |/ _ \/ __|
+// |  __/| | | (_) |  _| | |  __/\__ \
+// |_|   |_|  \___/|_| |_|_|\___||___/
+//******************************************************************************************
+//******************************************************************************************
+
+//rule black star: on server not touched, white star: on server touched, no start mean local only
+//p_name is enum
+
+//HTML entities:
+  const WARN_ON_PROFILE_HTML = "&#9888;";
+  const LOCAL_PROFILE_HTML = "&#9734;"; //white star
+  const SERVER_PROFILE_HTML = "&#9733;"; //black star
+  const WARN_ON_PROFILE = decodeEntities(WARN_ON_PROFILE_HTML);
+  const LOCAL_PROFILE   = decodeEntities(LOCAL_PROFILE_HTML);
+  const SERVER_PROFILE  = decodeEntities(SERVER_PROFILE_HTML);
+  const HiGHLITED_PROFILE = "yellow";
+  const DEFAULT_PROFILE_NAME = "default";
+
+  const ProfileState = Object.freeze({
+	  IS_LOCAL:    0,
+    ON_SERVER:   1,
+  })
+
+  class Profile{
+    constructor(p_name, status, json){
+      this.name = p_name;
+      this.status = status;
+      this.json = json;
+    }
+  }
+
+  const profile_list_row_template = `
+<li      name="profile_list_row_li" style="padding:0px; margin:0px; display:flex">
+  <p     style="margin:0px;">{p_star}</p>
+  <input name="profile_list_row_check" type="checkbox" />
+  <input name="profile_list_row_name" style="background:{p_sel};" type='text' value="{p_name}"/>
+</li>
+`;
+
+  class Profiles{
+    constructor(){
+      this.profiles = {};
+      this.p_sel = ""; //set when work has a profile
+    }
+    remove_server_profiles_from_list(){
+      Object.entries(this.profiles).forEach(entry => {
+        const [p_name, p] = entry;
+        if(p.status == ProfileState.ON_SERVER){
+          if(this.p_sel == p_name){
+            this.p_sel = "";
+          }
+          delete this.profiles[p_name];
+        }
+      }, this);
+    }
+    add_profile(p_name, p_sel, status, json){
+      if(p_sel){
+        this.p_sel = p_name;
+      }
+      let p = new Profile(p_name, status, json);
+      this.profiles[p_name] = p;
+    }
+    remove(p_name){
+      if(p_name in this.profiles){
+        if(this.p_sel == p_name){
+          this.p_sel = "";
+        }
+        delete this.profiles[p_name];
+      }
+    }
+    rename(p_old, p_new){
+      if (p_old !== p_new) {
+        this.profiles[p_new] = this.profiles[p_old];
+        delete this.profiles[p_old];
+        this.profiles[p_new].name = p_new;
+        if(this.p_sel == p_old){
+          this.p_sel = p_new;
+        }
+      }
+    }
+    set_touched_for_selected(){
+      if(this.p_sel == ""){
+        //if profile connected to work has been deleted or at startup
+        return;
+      }
+      this.profiles[this.p_sel].status = ProfileState.IS_LOCAL;
+      update_profile_list_on_DOM();
+    }
+    priv_get_profile_list_row_string(p_star, p_name, p_sel){
+      let e;
+      let bg = "initial";
+      if(p_sel){
+        bg = HiGHLITED_PROFILE;
+      }
+      let replacer = {
+        "p_star": p_star,
+        "p_name": p_name,
+        "p_sel" : bg,
+      };
+      return get_replaced_string(replacer, profile_list_row_template);
+    }
+    generate_profile_list(){
+      let dom_profile_list_str = "";
+      const start_tbl = "<ul id=\"profile_list\" style=\"margin:0px;padding:0px;\">";
+      const end_tbl = "</ul>";
+
+      for (const [p_name, p] of Object.entries(this.profiles)){
+        let c;
+        switch(p.status){
+          case ProfileState.IS_LOCAL:  c = LOCAL_PROFILE_HTML;  break;
+          default: continue;
+        }
+        let s = this.priv_get_profile_list_row_string(c, p_name, Boolean(p_name == this.p_sel));
+        dom_profile_list_str += s;
+      };
+
+      for (const [p_name, p] of Object.entries(this.profiles)){
+        let c;
+        switch(p.status){
+          case ProfileState.IS_LOCAL:  continue;
+          case ProfileState.ON_SERVER: c = SERVER_PROFILE_HTML; break;
+          default: c = WARN_ON_PROFILE_HTML; break;
+        }
+        let s = this.priv_get_profile_list_row_string(c, p_name, Boolean(p_name == this.p_sel));
+        dom_profile_list_str += s;
+      };
+      return  start_tbl + dom_profile_list_str + end_tbl;
+    }
+  }
+
+  var g_profile_lists = new Profiles();
+
+  function is_work_triggered(){
+    if(spots.spots.length > 0){
+      return true;
+    }
+    return false;
+  }
+
+  function set_selected(){
+    let a = document.getElementsByName("profile_list_row_name");
+    for(let e2 of a){
+      let pn = e2.value;
+      if(pn == g_profile_lists.p_sel){
+        e2.style["background"] = HiGHLITED_PROFILE;
+        e2.focus();
+      }else{
+        e2.style["background"] = "initial";
+      }
+    }
+  }
+
+  async function rename_profile(p_old, p_new){
+    const po = g_profile_lists.profiles[p_old];
+    if(po.status == ProfileState.ON_SERVER){
+      let st = await ren_profile_from_server2(p_old, p_new)
+      .catch(error => {
+        print_to_status(STATUS_ERROR_RENAME + " Server says: " + error.message);
+        console.error(error.message);
+      });
+    }
+
+    g_profile_lists.rename(p_old, p_new);
+    print_to_status(STATUS_RENAME_SUCCESS);
+  }
+
+  function profile_change_ask_user(info, ivalue, html, btn_fn_list, priv){
+    const e_status_old = document.getElementById("profile_status");
+    if(e_status_old){
+      e_status_old.remove();
+    }
+    e = document.getElementById("profile_status_offset");
+    e.insertAdjacentHTML('beforeend', html);
+    const e_status = document.getElementById("profile_status");
+    const e_input = document.getElementById("ask_user_btn__input");
+    e_input.focus();
+    e_input.value = ivalue;
+    if(btn_fn_list[0] != null){
+      e_input.addEventListener("keydown", function(e2){
+        if (e2.code === "Enter") {  //checks whether the pressed key is "Enter"
+          let do_remove = btn_fn_list[0](e_input, priv);
+          if(do_remove){
+            e_status.remove();
+          }
+        }
+      }, false);
+    }
+    for (let i = 1; i < btn_fn_list.length; i++) {
+      const e_fn = document.getElementById("ask_user_btn__fn"+i.toString());
+      if(btn_fn_list[i] != null){
+        e_fn.addEventListener('click', function(){
+          let do_remove = btn_fn_list[i](e_input, priv);
+          if(do_remove){
+            e_status.remove();
+          }
+        }, false);
+      }
+    }
+    print_to_status(info);
+  }
+  const profile_status_yes_no_part = `
+<div id="profile_status" style="width: 100%; border: 0px; overflow: hidden;">
+  <div style="width: 250px; float:left; border: 0px;">
+    <input id='ask_user_btn__input' type="text" style="width: 250px;" />
+  </div>
+  <div style="width: 3em; text-align:center; float:left;">
+    <button id='ask_user_btn__fn1' style="width:100%;" type='button'' >OK</button>
+  </div>
+  <div style="width: 3em; text-align:center; float:left;">
+    <button id='ask_user_btn__fn2' style="width:100%;" type='button'' >CANCEL</button>
+  </div>
+</div>
+`;
+  function next_profile(p_pre, p_next){
+    console.log("click", p_pre, p_next, g_profile_lists);
+    if(p_pre != "" && g_profile_lists.profiles[p_pre].status != ProfileState.ON_SERVER){
+      save_work_locally(p_pre);
+    }
+    load_work(g_profile_lists.profiles[p_next].json);
+    g_profile_lists.p_sel = p_next;
+    set_selected();
+    print_to_status(STATUS_PROFILE_SELECTED);
+  }
+
+  function update_profile_list_on_DOM(){
+    let e = document.getElementById("profile_list");
+    e.remove();
+    e = document.getElementById("profile_list_offset");
+    let o = g_profile_lists.generate_profile_list();
+    e.insertAdjacentHTML('beforeend', o);
+
+    let a = document.getElementsByName("profile_list_row_name");
+    for(let e2 of a){
+      e2.addEventListener("keydown", function (e3){
+        if (e3.code === "Enter") {
+          let p_new = e3.target.value;
+          let p_old = g_profile_lists.p_sel;
+          if(p_new == p_old){
+            return;
+          }
+          if(g_profile_lists.profiles[p_new]){
+            print_to_status(STATUS_ERROR_RENAME_PROFILE_EXISTS);
+            e3.target.value = p_old;
+            return;
+          }
+          g_profile_lists.p_sel = p_new;
+          rename_profile(p_old, p_new);
+          console.log("enter3", p_new, p_old, g_profile_lists.p_sel);
+          e3.target.blur();
+        }
+      }, false);
+      e2.addEventListener("focusout", function(e3){
+        console.log("focusout", e3.target.value, g_profile_lists.p_sel);
+        if(g_profile_lists.p_sel){
+          e3.target.value = g_profile_lists.p_sel;
+        }
+      }, false);
+      e2.addEventListener("click", function(e3){
+        let p_next = e3.target.value;
+        //Happen when sync with server at startup and user click on a profile
+        //Happen when p_sel has been deleted, work has changed and user click on a profile
+        if(g_profile_lists.p_sel == "" && is_work_triggered()){
+          //Ask user what to do!
+          do_anonymous(p_next);
+          return;
+        }
+        next_profile(g_profile_lists.p_sel, p_next);
+      }, false);
+    }
+  }
+  function add_profile_and_update_DOM(e_input_btn, p_sel, state, json){
+    let p_name = e_input_btn.value;
+    if(p_name in g_profile_lists.profiles){
+      print_to_status(STATUS_ERROR_PROFIFLE_EXISTS);
+      e_input_btn.focus();
+      return false;
+    }
+    g_profile_lists.add_profile(p_name, p_sel, state, json);
+    update_profile_list_on_DOM();
+    return true;
+  }
+
+  function newp_btn_ok(e_input_btn, priv) {
+    let p_name = e_input_btn.value;
+     //p_sel == "" happen when startup with no profiles and no spot has been created
+    if(!add_profile_and_update_DOM(e_input_btn, true, ProfileState.IS_LOCAL, "")){
+      return false;
+    }
+    save_work_locally(p_name);
+    g_profile_lists.p_sel = p_name;
+
+    console.log("newp_btn_ok", p_name, g_profile_lists);
+
+    print_to_status(STATUS_PROFILE_CREATED_WITH_SUCCESS);
+    return true;
+  }
+  function newp_btn_cancel(e_input_btn, priv){
+    print_to_status(STATUS_NEW_PROFILE_CANCELED);
+    return true;
+  }
+  function profile_btn__new(){
+    let info = STATUS_INSERT_NAME_OF_NEW_PROFILE;
+    let btn_fn_list = [newp_btn_ok, newp_btn_ok, newp_btn_cancel];
+    profile_change_ask_user(info, "", profile_status_yes_no_part, btn_fn_list, null);
+  }
+
+  async function use_it(p_sel){
+    console.log("use_it:", p_sel);
+    send_use_it_to_server2(p_sel, g_profile_lists.profiles[p_sel].json)
+      .catch(error => {
+        print_to_status(STATUS_ERROR_USE_NOT_SET + error.message);
+        console.error(error.message);
+      });
+  }
+
+  async function profile_btn__use(){
+    let p_sel = g_profile_lists.p_sel;
+    if(!p_sel){
+      print_to_status(STATUS_ERROR_USE_NO_PROFILE);
+      return;
+    }
+    if(g_profile_lists.profiles[p_sel].status == ProfileState.IS_LOCAL){
+      save_work_locally(p_sel);
+      await send_profile_to_server2(p_sel, g_profile_lists.profiles[p_sel].json)
+        .catch(error => {
+          print_to_status(STATUS_ERROR_USE_NOT_SAVED + error.message);
+          console.error(error.message);
+        });
+      //console.log("use_btn", p_sel, g_profile_lists.profiles[p_sel].status);
+      g_profile_lists.profiles[p_sel].status = ProfileState.ON_SERVER;
+    }
+    await use_it(p_sel);
+    update_profile_list_on_DOM();
+    print_to_status(STATUS_USE_SET_TO + "\"" + p_sel + "\"");
+  }
+
+  const profile_clash_part = `
+<div id="profile_status" style="width: 100%; border: 0px; overflow: hidden;">
+  <div style="width: 250px; float:left; border: 0px;">
+    <input id='ask_user_btn__input' type="text" style="width: 250px;" />
+  </div>
+  <div style="text-align:center; float:left; border: 1px solid cyan;">
+    <button id='ask_user_btn__fn1' style="width:100%;" type='button'' >Rename on server</button>
+  </div>
+  <div style="text-align:center; float:left; border: 1px solid cyan;">
+    <button id='ask_user_btn__fn2' style="width:100%;" type='button'' >Rename local</button>
+  </div>
+  <div style="text-align:center; float:left; border: 1px solid cyan;">
+    <button id='ask_user_btn__fn3' style="width:100%;" type='button'' >Overwrite local</button>
+  </div>
+  <div style="width: 3em; text-align:center; float:left; border: 1px solid cyan;">
+    <button id='ask_user_btn__fn4' style="width:100%;" type='button'' >Cancel</button>
+  </div>
+</div>
+`;
+
+  function clash_btn_rename_on_server(e_input_btn, priv){
+    let p_new = e_input_btn.value;
+    let p_old = priv[0];
+    let server_profile_list = priv[1];
+    console.log("clash_b", p_new, p_old, server_profile_list);
+    for (const [key, pn] of Object.entries(server_profile_list)){
+      if(pn == p_new){
+        let info = STATUS_ERROR_PROFIFLE_EXISTS_II
+        name_clash_ask_user_what_to_do(info, p_new, p_old, server_profile_list);
+        return;
+      }
+    };
+    let status = ren_profile_from_server2(p_old, p_new)
+        .then(status => {
+          sync_profile_btn_fn();
+        })
+        .catch(error => {
+          print_to_status(STATUS_ERROR_RENAME + " Server says: " + error.message);
+          console.error(error.message);
+        });
+    sync_profile_btn_fn();
+    return false;
+  }
+
+  function clash_btn_rename_local(e_input_btn, priv){
+    let p_new = e_input_btn.value;
+    let p_old = priv[0];
+    let server_profile_list = priv[1];
+    if(g_profile_lists.profiles[p_new]){
+      let info = STATUS_ERROR_PROFIFLE_EXISTS_III
+       name_clash_ask_user_what_to_do(info, p_new, p_old, server_profile_list);
+       return;
+    }
+    g_profile_lists.rename(p_old, p_new);
+    sync_profile_btn_fn();
+    return false;
+  }
+
+  function clash_btn_overwrite_local(e_input_btn, priv){
+    let p_clash = priv[0];
+    g_profile_lists.remove(p_clash);
+    sync_profile_btn_fn();
+    return false;
+  }
+
+  function clash_btn_cancel(e_input_btn, priv){
+    return true; //remove input and buttoms
+  }
+
+  function clash_btn_enter(e_input_btn, priv){
+    //just ignore
+    return false;
+  }
+
+  function name_clash_ask_user_what_to_do(info, ivalue, p_name_clash, server_profile_list){
+    const btn_fn_list = [clash_btn_enter, //"Enter" fn must be first rest is fn1..fnN
+                         clash_btn_rename_on_server, 
+                         clash_btn_rename_local,
+                         clash_btn_overwrite_local,
+                         clash_btn_cancel];
+    let priv = [p_name_clash, server_profile_list];
+    profile_change_ask_user(info, ivalue, profile_clash_part, btn_fn_list, priv);
+  }
+
+  async function sync_profile_btn_fn(){
+    print_to_status(STATUS_SYNC_WITH_SERVER);
+    let p_sel = g_profile_lists.p_sel;
+    e = document.getElementById("profile_status");
+    if(e != null){
+      e.remove();
+    }
+    var pfx = await get_profiles_from_server()
+      .catch(error => {
+        print_to_status(STATUS_ERROR_SYNC + error.message);
+        console.error(error.message);
+      });
+
+    g_profile_lists.remove_server_profiles_from_list();
+
+    //check for name clashing with local profiles
+    for (const [key, pn] of Object.entries(pfx)){
+      if(pn in g_profile_lists.profiles){
+        let info = STATUS_ERROR_PROFIFLE_EXISTS;
+        name_clash_ask_user_what_to_do(info, pn, pn, pfx);
+        return;
+      }
+    };
+    //send all locals to server
+    for (const [pn, p] of Object.entries(g_profile_lists.profiles)){
+      if(pn == p_sel){
+        p.json = generate_json_of_work(pn); //dont miss latest work
+      }
+      if(p.json != ""){
+        await send_profile_to_server2(pn, p.json)
+          .catch(error => {
+            print_to_status(STATUS_ERROR_SYNC + error.message);
+            console.error(error.message);
+          });
+        p.status = ProfileState.ON_SERVER;
+      }
+    }
+    //Get profiles from server
+    let promises = (pfx.map(pn => get_profile(pn)
+      .catch(err => {
+        console.log("catch got err: ", err);
+        print_to_status(STATUS_ERROR_PROFILE + " Got: " + err);
+        return Promise.reject(err);
+      })
+    ))
+    const results = await Promise.all(promises);
+    const valid_profiles = results.filter(result => !(result instanceof Error));
+    for (const [k, [pn, json]] of Object.entries(valid_profiles)){
+      g_profile_lists.add_profile(pn, Boolean(pn == p_sel), ProfileState.ON_SERVER, json);
+    }
+    update_profile_list_on_DOM();
+    print_to_status(STATUS_SYNC_SUCCESS);
+  }
+
+function del_profile_btn_fn(){
+  let i;
+  let check_found = false;
+  let a = document.getElementsByName("profile_list_row_li");
+  //getElementsByClassName returns a HTMLCollection, not an array.
+  //Removing anything from the DOM which is present in HTMLCollection 
+  //will also decrease the length of that HTMLCollection.
+  a = Array.from(a); 
+  for(let e of a){
+    let e_checkbox = e.children[1];
+    if(e_checkbox.checked){
+      check_found = true;
+      let p_name = e.children[2].value;
+      let origin = e.children[0].innerText;
+      if(origin === SERVER_PROFILE){
+        let status = del_profile_from_server2(p_name)
+          .then(status => {
+            g_profile_lists.remove(p_name);
+            e.remove();
+          })
+          .catch(error => {
+            print_to_status(STATUS_ERROR_DELETE + " Server says: " + error.message);
+            console.error(error.message);
+          });
+      }else{
+        g_profile_lists.remove(p_name);
+        e.remove();
+      }
+    }
+  }
+  let status = STATUS_DELETE_SUCCESS;
+  if (!check_found){
+    status = STATUS_NOTHING_CHECKED_NOTHING_DELETED;
+    if(Object.keys(g_profile_lists.profiles).length == 0){
+      status = STATUS_NOTHING_TO_DELETE;
+    }
+  }
+  print_to_status(status);
+}
+
+async function get_profile(pn) {
+  const res = await fetch('json/'+ pn + '.json')
+    .catch(error => {
+      throw new Error('Could not reach server', {cause: error});
+    });
+  if (!res.ok){
+     throw new Error(`profile: ${pn} Server responded with ${res.status} error: ${await res.text()}`); 
+     //should implicit call rejected to already returned promise
+  }
+  const json = await res.text();
+  return [pn, json];
+  //calls promise resolved
+}
+
+async function get_profiles_from_server(){
+  const response = await fetch('getprofilelist.php', {
+    method: 'post',
+    mode: "same-origin",
+    credentials: "same-origin",
+    headers: {"Content-Type": "application/json"}
+  });
+  if (!response.ok) {
+    throw new Error(`An error has occured: ${response.status}`);
+  }
+  const profiles = await response.json();
+  let profiles_files = (profiles.files).map((o) => o.file.replace('.json',''));
+  return profiles_files;
+}
+
+async function del_profile_from_server2(profile_name){
+  const response = await fetch('delprofile.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"fileName": profile_name + ".json"})
+  });
+  const content = await response.text();
+  console.log("del_profile", content);
+  if(!(content.includes("SUCCESS"))){
+    throw new Error(content);
+  }
+  return "";
+};
+
+async function ren_profile_from_server2(p_old, p_new){
+  const response = await fetch('renprofile.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({"oldFileName": p_old + ".json", "newFileName": p_new + ".json"})
+  });
+  const content = await response.text();
+  console.log("ren_profile", content);
+  if(!(content.includes("SUCCESS"))){
+    throw new Error(content);
+  }
+  return "";
+};
+
+async function send_profile_to_server2(pn, json){
+  const res = await fetch('submit.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: "{\"profileName\":\"" + pn + "\"," + json.slice(1)
+  })
+  .catch(error => {
+      throw new Error('Could not reach server', {cause: error});
+    });
+  if (!res.ok){
+     throw new Error(`Server responded with ${res.status} error: ${await res.text()}`); 
+  }
+  const status = await res.text();
+  if(!(status.includes("SUCCESS"))){
+    throw new Error(status);
+  }
+  return "";
+};
+
+async function send_use_it_to_server2(pn, json){
+  const res = await fetch('useit.php', {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: "{\"profileName\":\"" + pn + "\"," + json.slice(1)
+  })
+  .catch(error => {
+      throw new Error('Could not reach server', {cause: error});
+    });
+  if (!res.ok){
+     throw new Error(`Server responded with ${res.status} error: ${await res.text()}`); 
+  }
+  const status = await res.text();
+  if(!(status.includes("SUCCESS"))){
+    throw new Error(status);
+  }
+  return "";
+};
+
+
+
+//******************************************************************************************
+//******************************************************************************************
+//  ____              _       
+// / ___| _ __   ___ | |_ ___ 
+// \___ \| '_ \ / _ \| __/ __|
+//  ___) | |_) | (_) | |_\__ \
+// |____/| .__/ \___/ \__|___/
+//       |_|                  
+//******************************************************************************************
+//******************************************************************************************
+  const FilterType = Object.freeze({
+	  RMS:       0, //from rgba conv to greyscale on pixels decided by the inner circle in the template
+    RGB:       1,
+  })
+
+  class Spot{
+    constructor(id, x, y, r, c, img_coords, bm_template){
+      this.x = x; //circle coords on canvas
+      this.y = y;
+      this.r = r;
+      this.c = c;
+      this.id = id;
+      this.enable = true;
+      this.co = img_coords; //bm_template coords on the pic image
+      this.tm = bm_template; //RGB888 template with inner circle to indicate where RMS should be calculated
+      this.text_x = 0; //x coord on layer2 where id as number should be shown
+      this.text_y = 0; //do
+      this.text_show_number = false; //show the id as a number in the drawn circle
+      this.cur_filter_nr = FilterType.RMS;
+      this.save = {};
+    }
+    set_image_circle_coords(coords){
+      this.co = coords;
+    }
+    set_bitmap_template(template){
+      this.tm = template;
+    }
+    set_circle_coords(x, y, r){
+      this.x = x; this.y = y; this.r = r;
+    }
+    set_enable(enable){
+      this.enable = enable;
+    }
+  }
+
+  class Spots{
+    constructor(){
+      this.spots = [];
+      this.append_column_fn = this.dummy_append_column_fn;
+      this.delete_column_fn = this.dummy_delete_column_fn;
+    }
+
+    dummy_append_column_fn(id){console.log("Spots: append_column_fn not set")}
+    dummy_delete_column_fn(id){console.log("Spots: delete_column_fn not set")}
+
+    add_DOM_table_functions(append_column_fn, delete_column_fn){
+      this.append_column_fn = append_column_fn;
+      this.delete_column_fn = delete_column_fn;
+    }
+
+    insert_spot(sp){
+      this.spots.push(sp);
+      this.append_column_fn(sp.id);
+    }
+
+    get_spot(id){
+      for(let sp of this.spots){
+        if(sp.id == id){
+          return sp;
+        }
+      }
+      return null;
+    }
+
+    del_spot(spot_id){
+      let this_ = this;
+      this.spots = this.spots.filter(function(sp2){
+        if(spot_id == sp2.id){
+          this_.delete_column_fn(sp2.id);
+          return false;
+        }
+        return true;
+      });
+    }
+
+    *iterate(){
+      for(let sp of this.spots){
+        if(sp.enable == false){
+          continue;
+        }
+        yield sp;
+      }
+    }
+    //yield *this.arr.map(function (sp_, index, arr){
+    //  });
+    //};
+  }
+
+  function restore_spot(id, jsp){
+    if(jsp == null){
+      return;
+    }
+    let s = id.toString();
+    switch(jsp.filterType){
+      case "RMS":{
+        document.getElementById("signal_name" + s).value = jsp.sigalName;
+        document.getElementById("rms_min"     + s).value = jsp.min;
+        document.getElementById("rms_max"     + s).value = jsp.max;
+        break;
+      }
+      case "RGB":{
+        filter_select(id, FilterType.RGB);
+        document.getElementById("signal_name" + s).value = jsp.sigalName;
+        get_rgb_elements(s).map((e, ix) => e.value = jsp.rgbArr[ix]);
+        for(let jsu of jsp.aliasArr){
+          let alias_id = add_alias_to_row(id, "Add");
+          document.getElementById("signal_name" + alias_id).value = jsu.sigalName;
+          get_rgb_elements(alias_id).map((e, ix) => e.value = jsu.rgbArr[ix]);
+        }
+        break;
+      }
+    }
+  }
+
+  function clear_work(){
+    init();
+    draw_spots_and_circle(spots, cir);
+  }
+
+  function load_work(json){
+    init();
+    //const c = {...cir}
+    const obj = JSON.parse(json);
+
+    cir2 = new ExtendedCircle(0, 
+      SPOT_INITIAL_CIRCLE_COORD_X,
+      SPOT_INITIAL_CIRCLE_COORD_Y,
+      SPOT_INITIAL_CIRCLE_COORD_R, 
+      "rgba(255, 0, 0, 255)");
+    let win = layer1;
+    let dx = win.clientWidth / obj.imW;
+    let dy = win.clientHeight / obj.imH;
+    for(let jsp of obj.spots){
+      cir2.x = Math.round((jsp.x + jsp.r) * dx);
+      cir2.y = Math.round((jsp.y + jsp.r) * dy);
+      cir2.r = Math.round(jsp.r * dx);
+      let id = new_spot(cir2);
+      restore_spot(id, jsp);
+    }
+    //console.log("load_work:", json, spots);
+    draw_spots_and_circle(spots, cir);
+  }
+
+  function save_work_locally(p_name){
+    let json = generate_json_of_work(p_name);
+    let p = g_profile_lists.profiles[p_name];
+    p.json = json;
+    p.status = ProfileState.IS_LOCAL;
+    //console.log("json saved to:", p_sel, p.json);
+  }
+
+  function get_sp_info(sp, filter_nr){
+    let s = sp.id.toString();
+    let oo = new Object();
+    oo.x = sp.co.x;
+    oo.y = sp.co.y;
+    oo.r = sp.co.r;
+    e = document.getElementById("signal_name" + s);
+    oo.sigalName = e.value;
+    switch(filter_nr){
+      case FilterType.RMS:{
+        oo.filterType = "RMS";
+        oo.min = document.getElementById("rms_min" + s).value;
+        oo.max = document.getElementById("rms_max" + s).value;
+        break;
+      }
+      case FilterType.RGB:{
+        oo.filterType = "RGB";
+        oo.rgbArr = get_rgb_elements(sp.id.toString()).map((e) => e.value);
+        oo.aliasArr = [];
+        Array.from(document.getElementsByName("alias" + s)).map(function (e){
+          let su = new Object();
+          let s = e.id.toString();
+          su.sigalName = document.getElementById("signal_name" + s).value;
+          su.rgbArr = get_rgb_elements(s).map((e) => e.value);
+          oo.aliasArr.push(su);
+        });
+        break;
+      }
+    }
+    return oo;
+  }
+
+  function generate_json_of_work(p_name){
+    var e;
+    var o = new Object();
+    o.imW = take_bitmap.w;
+    o.imH = take_bitmap.h;
+    o.spots = [];
+    for (sp of spots.iterate()){
+      e = document.getElementById("filter" + sp.id.toString());
+      let oo = get_sp_info(sp, Number(e.value));
+      o.Save = sp.save;
+      o.spots.push(oo);
+    }
+    let json = JSON.stringify(o);
+    //let json_pretty_print = JSON.stringify(o,null,2);
+    //var newline = "\r\n";
+    return json;
+  }
+  
+  console.log("HELLO FIREFOX CONSOLE");
+
+//******************************************************************************************
+//******************************************************************************************
+//   ____ _          _      
+//  / ___(_)_ __ ___| | ___ 
+// | |   | | '__/ __| |/ _ \
+// | |___| | | | (__| |  __/
+//  \____|_|_|  \___|_|\___|
+//******************************************************************************************
+//******************************************************************************************
+class PixColor{
+    constructor(r,g,b,a){
+      this.r = r;
+      this.g = g;
+      this.b = b;
+      this.a = a;
+    }
+  }
+
+  const PixelType = Object.freeze({
+	  BW:          Symbol("bw"),         //1 bit per pixel
+    BW8:         Symbol("bw8"),        //1 bytes per pixel
+    RGB_565:     Symbol("rgb_565"),    //2 bytes per pixel (big endian)
+    RGB_565_LE:  Symbol("rgb_565_le"), //2 bytes per pixel (little endian)
+	  RGB_888:     Symbol("rgb_888"),    //3 bytes per pixel
+	  RGBA_888:    Symbol("rgba_888"),   //4 bytes per pixel
+  })
+
+  class SimpleCircle{
+    constructor(x, y, r){
+      this.x = x;
+      this.y = y;
+      this.r = r;
+    }
+  }
+
+  class ExtendedCircle{
+    constructor(id, x, y, r, c){
+      this.id = id; this.x = x; this.y = y; this.r = r; this.c = c;
+    }
+  }
+
+ 
+  class CalcRMSonRGBpixels{
+    constructor(take_image){
+      this.imd = take_image.d;
+      this.ms = 0;
+      this.calc_on_pixel = this.calc_ms_of_rgb_grey_values; //callback
+    }
+    calc_ms_of_rgb_grey_values(dir,n){ //dir is n/a
+      let r = ((this.imd[n] >> 11) & 0x1f) << 3;
+      let g = ((this.imd[n] >>  5) & 0x3f) << 2;
+      let b = ( this.imd[n]        & 0x1f) << 3;
+      let v = r * .3 + g * .59 + b * .11;
+      this.ms += Math.pow(v,2);
+    }
+    get_value(){
+      let rms = Math.round(Math.sqrt(this.ms));
+      return rms;
+    }
+  }
+
+  class CalcRMSonSeparateRGBpixels{
+    constructor(take_image){
+      this.imd = take_image.d;
+      this.msRed = 0;
+      this.msGreen = 0;
+      this.msBlue = 0;
+      this.calc_on_pixel = this.calc_ms_of_rgb_grey_values; //callback
+    }
+    calc_ms_of_rgb_grey_values(dir,n){ //dir is n/a
+      let r = ((this.imd[n] >> 11) & 0x1f) << 3;
+      let g = ((this.imd[n] >>  5) & 0x3f) << 2;
+      let b = ( this.imd[n]        & 0x1f) << 3;
+      this.msRed   += Math.pow(r,2);
+      this.msGreen += Math.pow(g,2);
+      this.msBlue  += Math.pow(b,2);
+    }
+    get_values(){
+      let rm = Math.round(Math.sqrt(this.msRed));
+      let gm = Math.round(Math.sqrt(this.msGreen));
+      let bm = Math.round(Math.sqrt(this.msBlue));
+      return [rm, gm, bm];
+    }
+  }
+
+  class TestShowPixelsAreasWithDifferentColors{
+    constructor(take_image){
+      this.tm = take_image;
+      this.calc_on_pixel = this.set_test_rgb_value; //callback
+    }
+
+    set_test_rgb_value(dir,n){
+      let r = 0;
+      let g = 0;
+      let b = 0;
+      switch (dir){
+        case 0: b = 255; break;
+        case 1: g = 255; break;
+        case 2: r = 255; break;
+      }
+      let rgb = r << 11 | g << 5 | b;
+      //rgb = rgb >> 8 | (rgb << 8) & 0xFFFF;
+      this.tm.d[n+0] |= rgb;
+    }
+
+    show_it(ctx){
+      this.tm.show_on_canvas(ctx);
+    }
+  }
+
+  class Bitmap{
+    constructor(w, h, data, pix_type, c){
+      this.w = w;
+      this.h = h;
+      this.d = data;
+      this.p = pix_type;
+      this.c = 0;
+      this.bw = 0;
+      switch(pix_type){ 
+        case PixelType.BW:
+          this.put_pixel = this.put_pixel_bw;
+          this.bw = 1;
+          break;
+        case PixelType.BW8:      
+          this.put_pixel = this.put_pixel_bw8;     
+          this.bw = 255;
+          break;
+        case PixelType.RGB_565:
+          this.put_pixel = this.put_pixel_rgb565;
+          this.c = c;
+        case PixelType.RGB_565_LE:
+          this.put_pixel = this.put_pixel_rgb565_le;
+          this.c = c;
+        case PixelType.RGBA_888:
+          this.put_pixel = this.put_pixel_rgba888;
+          this.c = c;
+          break;
+        default:
+      }
+    }
+
+    set_color(c){
+      this.c = c;
+    }
+
+    get_data(){
+      return this.d;
+    }
+
+    put_pixel_bw(x, y){
+      let i = y*this.w+x;
+      let n = i/8;
+      let m = i%8;
+      let o = this.bw;
+      this.d[n] = this.d[n] | o<<m;
+    }
+
+    put_pixel_bw8(x, y){
+      let i = y*this.w+x;
+      this.d[i+0] = this.bw;
+    }
+
+    put_pixel_rgb565(x, y){ //assume color in big endian
+      let i = (y*this.w+x)*2;
+      let rgb = (this.c.r & 0x1f) << 11 | (this.c.g & 0x3f) << 5 | this.c.b & 0x1f;
+      this.d[i+0] = rgb << 8;
+      this.d[i+1] = rgb;
+    }
+
+    put_pixel_rgb565_le(x, y){
+    }
+
+    put_pixel_rgba888(x, y){
+      let i = (y*this.w+x)*4;
+      this.d[i+0] = this.c.r;
+      this.d[i+1] = this.c.g;
+      this.d[i+2] = this.c.b;
+      this.d[i+3] = this.c.a;
+    }
+
+    show_on_canvas(ctx){
+      var imd = ctx.createImageData(this.w, this.h);
+      switch(this.p){
+        case PixelType.BW8:
+          for (let i=0,ii=0; i<imd.data.length; i+=4,ii++){
+            imd.data[i+0] = 0;
+            imd.data[i+1] = 0;
+            imd.data[i+2] = this.d[ii];
+            imd.data[i+3] = 255;
+          }
+          break;
+
+        case PixelType.RGB_565: //assume this.d is uint16 in big endian
+          //rrrrrggg gggbbbbb => rrrrr000 gggggg00 bbbbb000
+          for (let i=0; i<this.h*this.w; i++){
+            let ii = i*4;
+            let r = (this.d[i] >> 11) & 0x1f;
+            let g = (this.d[i] >>  5) & 0x3f;
+            let b =  this.d[i]        & 0x1f;
+            imd.data[ii+0] = r << 3;
+            imd.data[ii+1] = g << 2;
+            imd.data[ii+2] = b << 3;
+            imd.data[ii+3] = 255;
+          }
+          break;
+
+        case PixelType.RGB_565_LE: //assume this.d is uint16 in little endian
+          //gggbbbbb rrrrrggg => rrrrr000 gggggg00 bbbbb000
+          for (let i=0; i<this.h*this.w; i++){
+            let ii = i*4;
+            let r = (this.d[i]  >> 3)  & 0x1f;
+            let g = ((this.d[i] >> 13) & 0x07) | ((this.d[i] << 3) & 0x38);
+            let b = (this.d[i]  >> 8)  & 0x1f;
+            imd.data[ii+0] = r << 3;
+            imd.data[ii+1] = g << 2;
+            imd.data[ii+2] = b << 3;
+            imd.data[ii+3] = 255;
+          }
+          break;
+
+        case PixelType.RGBA_888:
+          for (let i=0; i<imd.data.length; i+=1){
+            imd.data[i] = this.d[i];
+          }
+          break;
+      }
+      //No scale
+      //ctx.putImageData(imd, 0, 0); 
+      //return;
+      
+      //With scale...
+      createImageBitmap(imd).then(im => {
+        ctx.drawImage(im, 0, 0, ctx.canvas.width, ctx.canvas.height);
+      });
+
+      //or...
+      //let tcv = document.createElement('canvas');
+      //let tcx = tcv.getContext('2d');
+      //tcv.width = imd.width;
+      //tcv.height = imd.height;
+      //tcx.putImageData(imd, 0, 0);
+      //ctx.drawImage(tcv, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    }
+
+    draw_square(wh){
+      for(let x=0; x<wh; x++){
+          this.put_pixel(x, 0);
+          this.put_pixel(x, wh-1);
+      }
+      for(let y=1; y<wh-1; y++){
+        this.put_pixel(0, y);
+        this.put_pixel(wh-1, y);
+      }
+    }
+    
+    draw_circle_parts(xc, yc, x, y){
+	    this.put_pixel(xc+x, yc+y);
+	    this.put_pixel(xc+y, yc+x);
+	    this.put_pixel(xc-y, yc+x);
+	    this.put_pixel(xc-x, yc+y);
+	    this.put_pixel(xc-x, yc-y);
+	    this.put_pixel(xc-y, yc-x);
+	    this.put_pixel(xc+y, yc-x);
+	    this.put_pixel(xc+x, yc-y);
+    }
+
+    draw_circle_midpoint(x0, y0, r){
+      let x = r;
+      let y = 0;
+      let err = 0;
+      while (x >= y){
+        this.draw_circle_parts(x0, y0, x, y);
+        if (err <= 0){
+          y += 1;
+          err += 2*y + 1;
+        }
+        if (err > 0){
+          x -= 1;
+          err -= 2*x + 1;
+        }
+      }
+    }
+
+    fill_outside_of_circle(){
+      let i=0;
+      let ii=0;
+      for(let y=0; y<this.h; y++){
+        let o = i;
+        for(let x=0; x<this.w; x++){
+          i  = o + x;
+          ii = o + (this.w - x - 1);
+          if(this.d[i]){
+            i = o + this.h;
+            break;
+          }
+          this.d[i ] = 255;
+          this.d[ii] = 255;
+        }
+      }
+    }
+
+    calc_rms_inside_circle(take_x, take_y, take_w, objfn){
+      var o = (take_y * take_w) + take_x;
+      if(this.w <= 5){
+        if(this.w <= 1){
+          objfn.calc_on_pixel(0,o);
+          return;
+        }
+        for(let y0=0; y0<this.h; y0++){
+          for(let x0=0; x0<this.w; x0++){
+            objfn.calc_on_pixel(0,o);
+            o  += take_w;
+          }
+        }
+        return;
+      }
+      var m = 0;
+      for(let y0=0; y0<this.h; y0++){
+        let i  = m;
+        let j  = o;
+        let jj = o + (this.w - 1);
+        let on_perifhery = false;
+        m  += this.w;
+        o  += take_w;
+        while(j < jj){
+          if (this.d[i]){
+            on_perifhery = true;
+            i++;
+            j++;
+            jj--;
+          }else{
+            if(on_perifhery){
+              objfn.calc_on_pixel(0,j);
+              objfn.calc_on_pixel(1,jj);
+            }
+            i++;
+            j++;
+            jj--;
+          }
+        }
+        //This code will never run when this.w*this.h is even!
+        if(j == jj && on_perifhery && this.d[i] == 0){
+           objfn.calc_on_pixel(2,j);
+        }
+      }
+    }
+
+
+    draw_circle_delta(xc, yc, r){
+    //let x = 0;
+    //let y = r;
+    //let d = 3-(2*r);
+    //this.draw_circle_parts(xc, yc, x, y);
+    //while (y >= x){
+    //  x++;
+    //  if (d > 0){
+    //      y--;
+    //      d = d + 4 * (x - y) + 5;
+    //  }else{
+    //      d = d + 4 * x + 6;
+    //  }
+    //  this.draw_circle_parts(xc, yc, x, y);
+    //}
+    }
+  }
+
+  function get_rgb_elements(id){
+    let arr = [];
+    let arrs = ["rgb_min_r", "rgb_min_g", "rgb_min_b", "rgb_max_r", "rgb_max_g", "rgb_max_b"];
+    for(eid of arrs){
+      arr.push(document.getElementById(eid + id));
+    }
+    return arr;
+  }
+  
+  function draw_circle_using_canvas(){
+    //let c = document.createElement('canvas');
+    //let ctx = c.getContext('2d');
+    //ctx.beginPath();
+    //ctx.fillStyle = "rgba(0, 0, 0, 1)";
+    //ctx.fillRect(0, 0, wh, wh);
+    //ctx.strokeStyle = "rgba(0, 0, 0, 1)";
+    //ctx.arc(cir.r, cir.r, cir.r, 0, 2*Math.PI);
+    //ctx.fillStyle = "rgba(0, 0, 255, 1)";
+    //ctx.fill();
+    //ctx.stroke();
+    //context.globalAlpha = 0;
+
+    //var new_image_url = c.toDataURL();
+    //var img = document.createElement('img');
+    //img.src = new_image_url;
+    //spot.image_data = ctx.getImageData(0, 0, wh, wh);
+  }
+
+  function calc_img_coords(cir, img, win){
+    let dx = img.w / win.clientWidth;
+    let dy = img.h / win.clientHeight;
+    let x = Math.round(cir.x * dx);
+    let y = Math.round(cir.y * dy);
+    let r = Math.round(cir.r * dx);
+    return new SimpleCircle(x-r, y-r, r);
+  }
+
+  function calc_win_coords(co, img, win){
+    let dx = win.clientWidth / img.w;
+    let dy = win.clientHeight / img.h;
+    let x = Math.round((co.x + co.r) * dx);
+    let y = Math.round((co.y + co.r) * dy);
+    let r = Math.round(co.r * dx);
+    return new SimpleCircle(x, y, r);
+  }
+
+  var first_time_init_text = true;
+  function new_spot(cir){
+    //spot.bm.draw_circle_delta(cir.r, cir.r, cir.r); //Not as beautiful as the midpoint
+    const co = calc_img_coords(cir, take_bitmap, layer1);
+
+    let wh = co.r*2;
+    let bm = new Bitmap(wh, wh, new Uint8Array(wh*wh), PixelType.BW8, 0); 
+    bm.draw_circle_midpoint(co.r, co.r, co.r);
+    cir.c = "rgba(0, 255, 0, 255)";
+    let sp = new Spot(uid, cir.x, cir.y, cir.r, cir.c, co, bm);
+
+    //If I do this code below in the init() the text is shown as black. No idea why!
+    if(first_time_init_text){
+      ctx2.font = "30px Arial";
+      ctx2.fillStyle = "cyan";
+      first_time_init_text = false;
+    }
+
+    let line_width  = ctx2.measureText(sp.id.toString()).width;
+    let line_height = parseInt(ctx2.font.match(/\d+/), 10);
+    sp.text_x = sp.x - line_width/2;
+    sp.text_y = sp.y + (line_height/2) - 3;
+
+
+    //let twh = ctx2.measureText(sp.id.toString());
+    //sp.text_x = cir.x - twh.width/2;
+    //sp.text_y = cir.y + twh.height/2;
+
+    //let font_width  = ctx2.measureText(sp.id.toString()).width;
+    //let font_height = parseInt(ctx2.font.match(/\d+/), 10);
+
+    //sp.text_x = cir.x - Math.floor(font_width/2);
+    //sp.text_y = cir.y + font_height/2;
+
+
+    //spot.bm.show_on_canvas(ctx1);
+    //objfn = new TestShowPixelsAreasWithDifferentColors(take_bitmap);
+    //sp.bm.calc_rms_inside_circle(sp.take_x, sp.take_y, take_bitmap.w, objfn);
+    //objfn.show_it(ctx1);
+
+    spots.insert_spot(sp);
+
+    cir.c = "rgba(255, 0, 0, 255)";
+    draw_spots_and_circle(spots, cir);
+    console.log("MD <new>", uid);
+    return uid++;
+  }
+
+function set_move_or_create_spot(){
+  for (let sp of spots.iterate()){
+    if(get_distance(cir.x, sp.x, cir.y, sp.y) < sp.r){
+      if (!spotSelected){
+        sp.set_enable(false);
+        cir.id = sp.id;
+        cir.x = sp.x;
+        cir.y = sp.y;
+        cir.r = sp.r;
+        cir.c  = "rgba(0, 0, 255, 255)"
+        old_spot_x = sp.x;
+        old_spot_y = sp.y;
+        spotSelected = true;
+        hasMoved = false;
+        console.log("MD <canMove>", sp.id);
+        draw_spots_and_circle(spots, cir);
+        return;
+      }
+      return;
+    } 
+  }
+  if(spotSelected){
+    if(hasMoved){
+      for (let sp of spots.iterate()){
+        if(get_distance(cir.x, sp.x, cir.y, sp.y) < sp.r+cir.r){
+          console.log("MD <occupied>", sp.id);
+          return;
+        }
+      }
+      const co = calc_img_coords(cir, take_bitmap, layer1);
+      let sp = spots.get_spot(cir.id);
+      if(sp.r != cir.r){
+        let wh = co.r*2;
+        let bm = new Bitmap(wh, wh, new Uint8Array(wh*wh), PixelType.BW8, 0); 
+        bm.draw_circle_midpoint(co.r, co.r, co.r);
+        sp.set_bitmap_template(bm);
+      }
+      sp.set_image_circle_coords(co);
+      sp.set_circle_coords(cir.x, cir.y, cir.r);
+
+      let line_width  = ctx2.measureText(sp.id.toString()).width;
+      let line_height = parseInt(ctx2.font.match(/\d+/), 10);
+      sp.text_x = sp.x - line_width/2;
+      sp.text_y = sp.y + (line_height/2) - 3;
+
+      sp.set_enable(true);
+      console.log("MD <moved>", sp.id);
+    }else{
+      spots.del_spot(cir.id);
+      console.log("MD <deleted>", cir.id);
+      //refresh_system();
+    }
+    hasMoved = false;
+    spotSelected = false;
+    cir.c = "rgba(255, 0, 0, 255)";
+    draw_spots_and_circle(spots, cir);
+    g_profile_lists.set_touched_for_selected(true);
+    return;
+  }
+  for (let sp of spots.iterate()){
+    if(get_distance(cir.x, sp.x, cir.y, sp.y) < sp.r+cir.r){
+      console.log("MD <overlap>", sp.id);
+      return;
+    }
+  }
+  new_spot(cir);
+  g_profile_lists.set_touched_for_selected(true);
+};
+
+function move_cursor_circle(event) {
+  rect = layer1.getBoundingClientRect();
+  cir.x = event.clientX - rect.left;
+  cir.y = event.clientY - rect.top;
+
+  let co = calc_img_coords(cir, take_bitmap, layer1);
+  let c  = calc_win_coords(co,  take_bitmap, layer1);
+  cir.x = c.x;
+  cir.y = c.y;
+  cir.r = c.r;
+
+  draw_spots_and_circle(spots, cir);
+  if(!hasMoved && spotSelected){
+    let d = get_distance(cir.x, old_spot_x, cir.y, old_spot_y);
+    if(d >= 1){
+      hasMoved = true;
+    }
+  }
+}
+
+function update_cursor_circle_circumference(event) {
+  event.preventDefault();
+  //event.stopPropagation();
+  if (event.deltaY > 0) {
+    if (cir.r > 5) cir.r--;
+  } else {
+    if (cir.r < 200) cir.r++;
+  }
+  draw_spots_and_circle(spots, cir);
+};
+
+function draw_spots_and_circle(spots, cir){
+  ctx2.clearRect(0, 0, layer2.clientWidth, layer2.clientHeight);
+  for (let sp of spots.iterate()){
+    if(sp.text_show_number){
+      draw_number(sp);
+    }
+    draw_circle(sp.x, sp.y, sp.r, sp.c);
+  }
+  draw_circle(cir.x, cir.y, cir.r, cir.c);
+}
+
+function draw_circle(x, y, r, c){
+  ctx2.beginPath();
+  ctx2.strokeStyle = c;
+  ctx2.arc(x, y, r, 0, 2*Math.PI);
+  ctx2.closePath();
+  ctx2.stroke();
+}
+
+function draw_number(sp){
+  //ctx2.font = "30px Arial";
+  //let line_width  = ctx2.measureText(sp.id.toString()).width;
+  //let line_height = parseInt(ctx2.font.match(/\d+/), 10);
+  //let text_x = sp.x - line_width/2;
+  //let adj = (line_height/2) - 2;
+  //let text_y = sp.y + adj;
+  ctx2.fillText(sp.id, sp.text_x, sp.text_y);
+}
+
+
+function get_distance(x0, x1, y0, y1){
+  return Math.sqrt(Math.pow(x1-x0,2) + Math.pow(y1-y0, 2));  
+}
+
+//******************************************************************************************
+//******************************************************************************************
+//  ____   ___  __  __ 
+// |  _ \ / _ \|  \/  |
+// | | | | | | | |\/| |
+// | |_| | |_| | |  | |
+// |____/ \___/|_|  |_|
+//******************************************************************************************
+//******************************************************************************************
+const rms_row_template = `
+<tr id='spot_id{id}' >
+  <td>
+  <button class="spot_id_btn" id='spot_id_btn{id}' type='button' name='spot_id_name' onclick='spot_id_btn_fn(id,this)' >{id}</button>
+  </td>
+  <td><input id='signal_name{id}' type='text' class='try_width' /></td>
+  <td>
+    <select id='filter{id}' class='selectx' onchange='filter_select_fn(id,this)' '>
+      <option value='0' selected>RMS</option>
+      <option value='1'>RGB</option>
+    </select>
+  </td>
+  <td id='rms_val{id}' class='try_right'>-</td>
+  <td><input id='rms_min{id}' type='text' class='try_width_right'/></td>
+  <td><input id='rms_max{id}' type='text' class='try_width_right'/></td>
+  <td id='res{id}' class='try_center'>-</td>
+</tr>
+`;
+
+const rgb_row_template = `
+<tr id='spot_id{id}' >
+  <td align='center' style="padding: 0px;">
+  <button class="spot_id_btn" id='spot_id_btn{id}' type='button' name='spot_id_name' onclick='spot_id_btn_fn(id,this)' >{id}</button>
+  </td>
+  <td>
+    <div style="border:0px;">
+      <div class="t"> <!-- This is the wrapper div around the text input -->
+        <input id='signal_name{id}' type="text" />
+      </div>
+      <button id='{id}' type='button' style="padding:0px; height:100%; width:38px;" onclick='rgb_btn_fn(id,this)' >Add</button>
+    </div>
+  </td>
+  <td>
+    <select id='filter{id}' class='selectx' onchange='filter_select_fn(id,this)' '>
+      <option value='0'>RMS</option>
+      <option value='1' selected>RGB</option>
+    </select>
+  </td>
+  <td>
+    <table class="rgb">
+      <tr>
+        <td id='rgb_val_r{id}' class="try_red">-</td>
+        <td id='rgb_val_g{id}' class="try_green">-</td>
+        <td id='rgb_val_b{id}' class="try_blue">-</td>
+      </tr>
+    </table>
+  </td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_min_r{id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_min_g{id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_min_b{id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>
+  </td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_max_r{id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_max_g{id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_max_b{id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>
+  </td>
+  <td id='res{id}' class='try_center'>-</td>
+</tr>
+`;
+
+const same_row_template = `
+<tr id='spot_id{id}' >
+  <td class='try_center'>same</td>
+  <td>
+    <div>
+      <div class="t"> <!-- This is the wrapper div around the text input -->
+        <input id='signal_name{alias_id}' type="text" />
+      </div>
+      <button id='{alias_id}' type='button' style="width:38px;" onclick='rgb_btn_fn(id,this)' >Del</button>
+    </div>
+  </td>
+  <td class="try_center">same</td>
+  <td class="try_center">same as above</td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_min_r{alias_id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_min_g{alias_id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_min_b{alias_id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>    
+  </td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_max_r{alias_id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_max_g{alias_id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_max_b{alias_id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>    
+  </td>
+  <td id='res{alias_id}' class='try_center'>-</td>
+</tr>
+`;
+
+function get_replaced_string(replacer, template){
+  let new_row = template.replace(/{([^{}]+)}/g, function(keyExpr, key) {
+    return replacer[key] || "";
+  });
+  return new_row;
+}
+
+function add_template(row, replacer, template){
+  let new_row = template.replace(/{([^{}]+)}/g, function(keyExpr, key) {
+    return replacer[key] || "";
+  });
+  row.insertAdjacentHTML('beforeend', new_row);
+}
+
+function add_rms_row(row, id_str){
+  let replacer = {
+    "id": id_str,
+  };
+  add_template(row, replacer, rms_row_template);
+}
+
+function add_rgb_row(row, id_str){
+  let replacer = {
+    "id": id_str,
+  };
+  add_template(row, replacer, rgb_row_template);
+}
+
+function add_same(row, id_str, alias_id_str){
+  let replacer = {
+    "id": id_str,
+    "alias_id": alias_id_str,
+  };
+  add_template(row, replacer, same_row_template);
+}
+
+function appendColumn(id) {
+  let tbl = document.getElementById("spot_table_tbody"); //has the tbody attributes
+  add_rms_row(tbl, id.toString());
+}
+
+function delete_column(id) {
+  let s = id.toString();
+  Array.from(document.getElementsByName("alias" + s)).map((e)=>e.remove());
+  document.getElementById("spot_id" + s).remove();
+}
+
+function filter_select(id, filter_nr){
+  let s   = id.toString();
+  let si  = "spot_id" + s;
+  let row = document.getElementById(si);
+  let new_row = document.createElement("tr");
+  new_row.id = si;
+  switch(filter_nr){
+    case FilterType.RMS:{
+      Array.from(document.getElementsByName("alias" + s)).map((e)=>e.remove());
+      add_rms_row(new_row, s);
+      break;
+    }
+    case FilterType.RGB:{
+      add_rgb_row(new_row, s);
+      break;
+    }
+    default:
+      return;
+  }
+  row.replaceWith(new_row);
+}
+
+function filter_select_fn(filter_id, sel){
+  let id = filter_id.replace('filter', '');
+  let filter_nr = Number(sel.value);
+  save_cur_spot(id, filter_nr);
+  filter_select(id, filter_nr);
+  restore_cur_spot(id, filter_nr);
+  spot_id_set_btn_background(id);
+}
+
+function add_alias_to_row(dual_id, cmd){
+  let alias_id;
+  switch(cmd){
+    case "Add":{
+      let spot_id_str = dual_id.toString();
+      let row = document.getElementById("spot_id" + spot_id_str);
+      let alias_arr = document.getElementsByName("alias" + spot_id_str);
+      let rowIndex = row.rowIndex + alias_arr.length + 1;
+      let new_row = document.getElementById("spot_table").insertRow(rowIndex);
+      alias_id = spot_id_str + '_' + alias_arr.length;
+      new_row.id = alias_id;
+      //new_row.name = "alias"  + s; //does not work!
+      new_row.setAttribute("name", "alias" + spot_id_str); //works!
+      add_same(new_row, spot_id_str, new_row.id);
+      break;
+    }
+    case "Del":{
+      alias_id = dual_id;
+      document.getElementById(alias_id).remove();
+      break;
+    }
+  }
+  return alias_id;
+}
+
+function rgb_btn_fn(id, b){
+  add_alias_to_row(id, b.textContent)
+}
+
+
+function spot_id_set_btn_background(id){
+  let e = document.getElementById("spot_id_btn" + id.toString());
+  let sp = this.spots.get_spot(id);
+  if(sp.text_show_number){
+    e.style.backgroundColor = SPOT_ID_BTN_COLOR_ACTIVE;
+  }else{
+    e.style.backgroundColor = SPOT_ID_BTN_COLOR_UNACTIVE;
+  }
+  draw_spots_and_circle(spots, cir);
+}
+
+function spot_id_btn_all_fn(id, b){
+  if(b.style.backgroundColor == SPOT_ID_BTN_COLOR_ALL_ACTIVE){
+    this.spots.spots.map((sp) => sp.text_show_number = false);
+    b.style.backgroundColor = SPOT_ID_BTN_COLOR_ALL_UNACTIVE;
+    Array.from(document.getElementsByName("spot_id_name")).map((e) => e.style.backgroundColor = SPOT_ID_BTN_COLOR_UNACTIVE);
+  }else{
+    this.spots.spots.map((sp) => sp.text_show_number = true);
+    b.style.backgroundColor = SPOT_ID_BTN_COLOR_ALL_ACTIVE;
+    Array.from(document.getElementsByName("spot_id_name")).map((e) => e.style.backgroundColor = SPOT_ID_BTN_COLOR_ACTIVE);
+  }
+  draw_spots_and_circle(spots, cir);
+}
+
+function spot_id_btn_fn(spot_btn_id, b){
+  let id = spot_btn_id.replace('spot_id_btn', '');
+  let sp = this.spots.get_spot(id);
+  if(sp.text_show_number){
+    sp.text_show_number = false;
+    b.style.backgroundColor = SPOT_ID_BTN_COLOR_UNACTIVE;
+  }else{
+    sp.text_show_number = true;
+    b.style.backgroundColor = SPOT_ID_BTN_COLOR_ACTIVE;
+  }
+  draw_spots_and_circle(spots, cir);
+}
+
+function save_cur_spot(id, next_filter_nr){
+  let sp = this.spots.get_spot(id);
+  sp.save[sp.cur_filter_nr] = get_sp_info(sp, sp.cur_filter_nr);
+  sp.cur_filter_nr = next_filter_nr;
+}
+
+function restore_cur_spot(id, filter_nr){
+  let sp = this.spots.get_spot(id);
+  restore_spot(id, sp.save[filter_nr]);
+}
+
+init();
+
+//******************************************************************************************
+//******************************************************************************************
+//  ____                                 _     _
+// / ___|  ___ _ ____   _____ _ __   ___(_) __| | ___ 
+// \___ \ / _ \ '__\ \ / / _ \ '__| / __| |/ _` |/ _ \
+//  ___) |  __/ |   \ V /  __/ |    \__ \ | (_| |  __/
+// |____/ \___|_|    \_/ \___|_|    |___/_|\__,_|\___|
+//******************************************************************************************
+//******************************************************************************************
+
+/*
+  Apache2 server as docker file:
+  https://hub.docker.com/r/ubuntu/apache2
+  docker logs -f apache2-container
+  http://localhost:8080
+  sudo docker run -d --name apache2-container -e TZ=UTC -v /$(pwd)/local/testweb:/var/www/html -p 8080:80 ubuntu/apache2:2.4-22.04_beta
+  sudo docker exec -it apache2-container /bin/bash
+
+  sudo docker start apache2-container
+  sudo docker restart 319371a31e40
+
+  Apache2 files/directories:
+  ServerRoot              ::      /etc/apache2
+  DocumentRoot            ::      /var/www
+  Apache Config Files     ::      /etc/apache2/apache2.conf
+                          ::      /etc/apache2/ports.conf
+  Default VHost Config    ::      /etc/apache2/sites-available/default, /etc/apache2/sites-enabled/000-default
+  Module Locations        ::      /etc/apache2/mods-available, /etc/apache2/mods-enabled
+  ErrorLog                ::      /var/log/apache2/error.log
+  AccessLog               ::      /var/log/apache2/access.log
+  cgi-bin                 ::      /usr/lib/cgi-bin
+  binaries (apachectl)    ::      /usr/sbin
+  start/stop              ::      /etc/init.d/apache2 (start|stop|restart|reload|force-reload|start-htcacheclean|stop-htcacheclean)
+
+  Create a new dir "image" in "/www/html/" (on docker) or in /var/local/testweb/
+  Create a new dir "json"  in "/www/html/" (on docker) or in /var/local/testweb/
+
+  tail -f /var/log/apache2/error.log
+  
+  php file below inserted in dir /www/html/
+
+  on docker container:
+  chmod 777 -R /var/www
+  cat /etc/group | grep www  
+  www-data:x:33:
+
+  create this file: vi submit.php insert in "~/local/testweb".
+
+  submit.php:
+--------------------------------------------------------------------------------------
+  <?php
+  // Handling data in JSON format on the server-side using PHP
+  //
+  header("Content-Type: application/json");
+  // build a PHP variable from JSON sent using POST method
+  $j = stripslashes(file_get_contents("php://input"));
+  $v = json_decode($j);
+  // build a PHP variable from JSON sent using GET method
+  // $v = json_decode(stripslashes($_GET["data"]));
+  // encode the PHP variable to JSON and send it back on client-side
+  // echo json_encode($v);
+
+  $o = "Spot imW: $v->imW, imH: $v->imH \r\n";
+  $f = fopen("json/".$v->profileName.".json", "w+") or die("Unable to open file!");
+  fwrite($f, $j);
+  fclose($f);
+
+  echo $j;
+  ?>
+--------------------------------------------------------------------------------------
+
+getprofilelist.php
+--------------------------------------------------------------------------------------
+<?php
+header('Content-Type: application/json');
+
+$dir          = "./json"; //path
+
+$list = array(); //main array
+
+if(is_dir($dir)){
+    if($dh = opendir($dir)){
+        while(($file = readdir($dh)) != false){
+
+            if($file == "." or $file == ".."){
+                //...
+            } else { //create object with two fields
+                $list3 = array(
+                'file' => $file,
+                'size' => filesize($file));
+                array_push($list, $list3);
+            }
+        }
+    }
+
+    $return_array = array('files'=> $list);
+
+    echo json_encode($return_array);
+}
+
+?>
+--------------------------------------------------------------------------------------
+
+
+**************************************************************************************
+
+convrgb.py:
+--------------------------------------------------------------------------------------
+#!/usr/bin/python3
+import argparse
+from argparse import RawTextHelpFormatter
+import struct
+import os
+from PIL import Image
+from enum import Enum
+
+class Mode(Enum):
+    BIN = ".bin"
+    XXX = ".xxx"
+
+example_text = """Examples:
+* Convert png file to rgb565 in little endian format  *
+* Convert bin in little endian format to png with the *
+* image size given in the args                        *
+python conv.py -i f1.png -o f1.bin
+python conv.py -s 60 62 -i f1.bin -o f1x.png
+
+* Convert png file to rgb565 in big endian format     *
+* Convert bin in big endian format to png             *
+python conv.py -b -i f1.png -o f1.bin
+python conv.py -b -s 60 62 -i f1.bin -o f1x.png
+
+* Convert png file and add the png file size as       *
+* (width, height) as uint16 values in big endian      *
+* format                                              *
+* Convert bin to png use the size given in the bin    *
+* file                                                *
+python conv.py -b -u -i f1.png -o f1.bin
+python conv.py -u -b -i f1.bin -o f1x.png
+
+* Convert jpg to rs565 bin file                       *
+* Convert the bin to either jpg or png                *
+python conv.py -u -i f2.jpg -o f2.bin
+python conv.py -u -i f2.bin -o f2x.jpg
+python conv.py -u -i f2.bin -o f2x.png
+"""
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Image format converter.",
+        formatter_class=RawTextHelpFormatter,
+        epilog=example_text
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        required=True,
+        dest="InputFile",
+        help="Input file to be converted."
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        required=True,
+        dest="OutputFile",
+        help="Output file."
+    )
+    parser.add_argument(
+        "-b",
+        "--bigendian",
+        action='store_true',
+        dest="b",
+        default=argparse.SUPPRESS,
+        help="Send output as big endian if binary file is selected, ignored otherwise."
+    )
+    parser.add_argument(
+        "-u",
+        "--usesize",
+        action='store_true',
+        dest="u",
+        default=argparse.SUPPRESS,
+        help="Has two functionalities:\n"
+             " * Input file is binary: Use the width and height given in the file.\n"
+             " * Output file is binary: Embed input file size (width,height)\n"
+             "   at the start of the bin file as uint16 values in big endian format."
+    )
+    parser.add_argument(
+        "-s",
+        "--size",
+        nargs=2,
+        type=int,
+        metavar=('width', 'height'),
+        dest="s",
+        help="If input file is binary then use this size on the new Image.\n"
+             "(Is overruled if the -u arg is present)."
+    )
+
+
+
+    args = parser.parse_args()
+
+    in_path = os.path.basename(args.InputFile).rsplit('.', 1)
+
+    mode = Mode.BIN if (in_path[1] == 'bin') else Mode.XXX
+
+    out_path = os.path.basename(args.OutputFile).rsplit('.', 1)
+
+    if len(out_path) != 2:
+        print("Error: Invalid arguments.")
+        exit(1)
+
+    if (in_path[1] not in ['png', 'jpg', 'jpeg', 'bin']):
+        print("Error: Input file must be a .png, .jpg or .bin file.")
+        exit(1)
+
+    if (out_path[1] not in ['png', 'jpg', 'jpeg', 'bin']):
+        print("Error: Output file must be a .png, .jpg or .bin file.")
+        exit(1)
+
+    if (in_path[1] == out_path[1]):
+        print("Error: Input and output file must be different.")
+        exit(1)
+
+    if args.s:
+        if len(args.s) != 2:
+            print("Error: Size must be given with both image Width and Height values.")
+            exit(1)
+
+    if mode == Mode.BIN:
+        convert_rgb565_to_png(args)
+    else:
+        convert_png_to_rgb565(args)
+
+def convert_png_to_rgb565(args):
+    im = Image.open(args.InputFile)
+    width, height = im.size
+    bo = 'little'
+    if hasattr(args, 'b'):
+        bo = 'big'
+    print("Input file: Width: " + str(width) + ", Height: " + str(height))
+
+    # iterate over the pixels
+    with open(args.OutputFile, 'wb') as f:
+        if hasattr(args, 'u'):
+            f.write((width).to_bytes(2, byteorder='big', signed=False))
+            f.write((height).to_bytes(2, byteorder='big', signed=False))
+        for i, pixel in enumerate(im.getdata()):
+            r = (pixel[0] >> 3) & 0x1F
+            g = (pixel[1] >> 2) & 0x3F
+            b = (pixel[2] >> 3) & 0x1F
+            rgb = r << 11 | g << 5 | b
+            f.write((rgb).to_bytes(2, byteorder=bo, signed=False))
+
+def convert_rgb565_to_png(args):
+    with open(args.InputFile, 'rb') as f:
+        if args.s:
+            width, height = args.s
+        if hasattr(args, 'u'):
+            width  = int.from_bytes(f.read(2), byteorder='big')
+            height = int.from_bytes(f.read(2), byteorder='big')
+        data = f.read()
+        a = struct.unpack("H" * ((len(data)) // 2), data)
+        im = Image.new('RGB', (width, height))
+        for i, word in enumerate(a):
+            if hasattr(args, 'b'):
+                word = word >> 8 | word << 8
+            r = (word >> 11) & 0x1F
+            g = (word >> 5) & 0x3F
+            b = (word) & 0x1F
+            im.putpixel((i % width, i // width), (r << 3, g << 2, b << 3))
+        im.save(args.OutputFile)
+
+if __name__ == '__main__':
+    main()
+
+
+
+  */
+</script>
+</html>
