@@ -152,16 +152,80 @@
       }
       .grid-container {
         display: grid;
-        grid-template-columns: auto auto;
+        grid-template-columns: 25ch 32ch 20ch;
         gap: 0px;
         background-color: white;
         padding: 0px;
       }
-      .grid-container > div {
+      .grid-container2 {
+        display: grid;
+        grid-template-columns: 25ch 35ch;
+        gap: 0px;
+        background-color: white;
+        padding: 0px;
+      }
+      .grid-container .grid-container2 > div {
         background-color: white;
         text-align: left;
         padding: 0px 0;
         font-size: 17px;
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        margin: 2px;
+        width: 34px;
+        height: 16px;
+      }
+      .switch input { 
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 10px;
+        width: 10px;
+        left: 2px;
+        bottom: 3px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+
+      input:checked + .slider {
+        background-color: #2196F3;
+      }
+
+      input:focus + .slider {
+        box-shadow: 0 0 1px #2196F3;
+      }
+
+      input:checked + .slider:before {
+        -webkit-transform: translateX(20px);
+        -ms-transform: translateX(20px);
+        transform: translateX(20px);
+      }
+
+      /* Rounded sliders */
+      .slider.round {
+        border-radius: 30px;
+      }
+      .slider.round:before {
+        border-radius: 50%;
       }
     </style>
     <meta charset="utf-8" />
@@ -180,37 +244,152 @@
     </div>
   </section>
   <section style="border-width:10px; border-style:solid; border-color:blue;">
-
     <div class="grid-container">
       <div>Picture scale:</div>
       <div>Picture speed:</div>
-      <div style="width: 100%; overflow: hidden;">
-        <!--<div style="width: 150px; float:left; border: 1px solid red;">-->
-        <div style="width: 150px; float:left;">
-            <input type="range" id="canvas_scale" name="canvas_scale" list="markers" value="3" min="1" max="5"/>
-        </div>
-        <!--<div style="width: 2em; float:left; border: 1px solid cyan;">-->
-        <div style="width: 2em; float:left;">
-            <label style="display: block; text-align: center; line-height: 100%;" id="scale_factor_text">x3</label>
-        </div>
+      <div>Camera sensor settings:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+        <label>x1</label>
+        <input id="pic_sc" type ="range" max="5" min="1" step="1" value="0" oninput="document.getElementById('pic_sc_val').innerHTML = 'x5 (x' + this.value + ')'"></input>
+        <label id="pic_sc_val" >x5 (x3)</label>
       </div>
-      <div style="width: 100%; overflow: hidden;">
-        <div style="float:left; display: block; line-height: 100%;">
-          <input type="range" id="canvas_period" name="canvas_period" onchange="show_period(this.value)" oninput="show_period(this.value)" step="20" value="40" min="40" max="2000"/>
-        </div>
-        <div style="width: 5em; text-align:left; float:left;">
-          <label style="display: block; text-align: center; line-height: 100%;"><label id="picture_period">40 ms</label></label>
-        </div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+        <label>40</label>
+        <input id="pic_sp" type ="range" max="2000" min="40" step="1" value="500" onchange="show_period(this.value)" oninput="show_period(this.value)"></input>
+        <label id="pic_sp_val">2000 (500ms)</label>
       </div>
+      <button style="width:100%;" type='button' onclick="document.getElementById('sensor_t').hidden ^= true;">Show/Hide</button>
     </div>
-    <datalist id="markers">
-      <option value="1"></option>
-      <option value="2"></option>
-      <option value="3"></option>
-      <option value="4"></option>
-      <option value="5"></option>
-    </datalist>
   </section>
+  <section id="sensor_t" style="border-width:10px; border-style:solid; border-color:cyan;" hidden>
+    <div class="grid-container2">
+      <div>Brightness:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>-2</label>
+          <input id="sn_bri" type ="range" max="2" min="-2" step="1" value="0" oninput="document.getElementById('sn_bri_val').innerHTML = '2 (' + this.value + ')'"></input>
+          <label id="sn_bri_val">2 (0)</label>
+      </div>
+      <div>Contrast:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>-2</label>
+          <input id="sn_con" type ="range" max="2" min="-2" step="1" value="0" oninput="document.getElementById('sn_con_val').innerHTML = '2 (' + this.value + ')'"></input>
+          <label id="sn_con_val">2 (0)</label>
+      </div>
+      <div>Saturation:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>-2</label>
+          <input id="sn_sat" type ="range" max="2" min="-2" step="1" value="0" oninput="document.getElementById('sn_sat_val').innerHTML = '2 (' + this.value + ')'"></input>
+          <label id="sn_sat_val">2 (0)</label>
+      </div>
+      <div>Special effect:</div>
+      <select id="sn_eff" style="width:195px;" >
+        <option value="0">No effect</option>
+        <option value="1">Negative</option>
+        <option value="2">Gray scale</option>
+        <option value="3">RED tint</option>
+        <option value="4">GREEN tint</option>
+        <option value="5">BLUE tint</option>
+        <option value="6">Sepia</option>
+      </select>
+      <div>White balance:</div>
+      <label class="switch">
+        <input id="sn_wb" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>White balance gain:</div>
+      <label class="switch">
+        <input id="sn_wbg" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>White balance mode:</div>
+      <select id="sn_wbm" style="width:195px;">
+        <option value="0">Auto</option>
+        <option value="1">Sunny</option>
+        <option value="2">Cloudy</option>
+        <option value="3">Office</option>
+        <option value="4">Home</option>
+      </select>
+      <div>Exposure control:</div>
+      <label class="switch">
+        <input id="sn_ec" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>AEC2:</div>
+      <label class="switch">
+        <input id="sn_aec2" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>AE level:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>-2</label>
+          <input id="sn_ael" type ="range" max="2" min="-2" step="1" value="0" oninput="document.getElementById('sn_ael_val').innerHTML = '2 (' + this.value + ')'"></input>
+          <label id="sn_ael_val">2 (0)</label>
+      </div>
+      <div>AE value:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>0</label>
+          <input id="sn_aev" style="width:166px" type ="range" max="1200" min="0" step="1" value="0" oninput="document.getElementById('sn_aev_val').innerHTML = '1200 (' + this.value + ')'"></input>
+          <label id="sn_aev_val">1200 (0)</label>
+      </div>
+      <div>Gain control:</div>
+      <label class="switch">
+        <input id="sn_gc" type="checkbox">
+        <span class="slider round"></span>
+      </label>
+      <div>AGC gain:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>0</label>
+          <input id="sn_agcg" style="width:166px" type ="range" max="30" min="0" step="1" value="0" oninput="document.getElementById('sn_agcg_val').innerHTML = '30 (' + this.value + ')'"></input>
+          <label id="sn_agcg_val">30 (0)</label>
+      </div>
+      <div>Gainceiling:</div>
+      <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
+          <label>0</label>
+          <input id="sn_gce" style="width:166px" type ="range" max="6" min="0" step="1"  value="0" oninput="document.getElementById('sn_gce_val').innerHTML = '6 (' + this.value + ')'"></input>
+          <label id="sn_gce_val">6 (0)</label>
+      </div>
+      <div>BPC:</div>
+      <label class="switch">
+        <input id="sn_bpc" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>WPC:</div>
+      <label class="switch">
+        <input id="sn_wpc" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>Raw GMA:</div>
+      <label class="switch">
+        <input id="sn_rgma" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>Lens correction:</div>
+      <label class="switch">
+        <input id="sn_lc" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>Horizontal mirror:</div>
+      <label class="switch">
+        <input id="sn_hm" type="checkbox">
+        <span class="slider round"></span>
+      </label>
+      <div>Vertical flip:</div>
+      <label class="switch">
+        <input id="sn_vf" type="checkbox">
+        <span class="slider round"></span>
+      </label>
+      <div>DCW:</div>
+      <label class="switch">
+        <input id="sn_dcw" type="checkbox" checked>
+        <span class="slider round"></span>
+      </label>
+      <div>Colorbar:</div>
+      <label class="switch">
+        <input id="sn_cb" type="checkbox">
+        <span class="slider round"></span>
+      </label>
+    </div>
+</section>
   <section style="border-width:10px; border-style:solid; border-color:white;">
     <table class="sp">
       <tr>
@@ -316,6 +495,8 @@
   const SPOT_INITIAL_CANVAS_SCALE = 3; //3x of received picutre
 
   const DEFAULT_PIC_PERIOD = 2000;
+  const DISABLE = false;
+  const ENABLE = true;
 
 
   //GLOBALS:
@@ -340,9 +521,82 @@
   var cir;
   var exp_cnt = 0;
   var pic_period = DEFAULT_PIC_PERIOD;
+  var cam_sensor = null;
+  var sensor_json = "";
 
-  let e = document.getElementById("canvas_period");
-  e.value = DEFAULT_PIC_PERIOD;
+  document.getElementById("pic_sc").value = SPOT_INITIAL_CANVAS_SCALE;
+  document.getElementById("pic_sp").value = DEFAULT_PIC_PERIOD;
+
+  const SpecialEffect = Object.freeze({
+	  NO_EFFECT:    0,
+    NEGATIVE:     1,
+    GRAYSCALE:    2,
+    RED_TINT:     3,
+    GREEN_TINT:   4,
+    BLUE_TINT:    5,
+    SEPIA:        6,
+  })
+  const WhiteBalanceMode = Object.freeze({
+	  AUTO:    0,
+    SUNNY:   1,
+    CLOUDY:  2,
+    OFFICE:  3,
+    HOME:    4,
+  })
+
+  class Sensor{
+    constructor(){
+      this.brightness = 0; //-2 to 2
+      this.contrast = 0; //-2 to 2
+      this.saturation = 0; //-2 to 2
+      this.specialEffect = SpecialEffect.NO_EFFECT;
+      this.whiteBalance = DISABLE;
+      this.whiteBalanceGain = DISABLE;
+      this.whiteBalanceMode = WhiteBalanceMode.AUTO; 
+      this.exposureControl = DISABLE;
+      this.aec2 = DISABLE;
+      this.aeLevel = 0; //-2 to 2
+      this.aecValue = 0; //0 to 1200
+      this.gainCtrl = DISABLE;
+      this.agcGain = 0; //0 to 30
+      this.gainCeiling = 0; //0 to 6
+      this.bpc = DISABLE;
+      this.wpc = DISABLE;
+      this.rawGma = DISABLE;
+      this.lensCorrection = ENABLE;
+      this.horizontalMirror = DISABLE;
+      this.verticalFlip = DISABLE;
+      this.dcw = DISABLE;
+      this.colorbar = DISABLE;
+    }
+    getValuesFromDom(){
+      this.brightness       = document.getElementById("sn_bri").value;
+      this.contrast         = document.getElementById("sn_con").value;
+      this.saturation       = document.getElementById("sn_sat").value;
+      this.specialEffect    = document.getElementById("sn_eff").value;
+      this.whiteBalance     = document.getElementById("sn_wb").checked;
+      this.whiteBalanceGain = document.getElementById("sn_wbg").checked;
+      this.whiteBalanceMode = document.getElementById("sn_wbm").value;
+      this.exposureControl  = document.getElementById("sn_ec").checked;
+      this.aec2             = document.getElementById("sn_aec2").checked;
+      this.aeLevel          = document.getElementById("sn_ael").value;
+      this.aecValue         = document.getElementById("sn_aev").value;
+      this.gainCtrl         = document.getElementById("sn_gc").checked;
+      this.agcGain          = document.getElementById("sn_agcg").value;
+      this.gainCeiling      = document.getElementById("sn_gce").value;
+      this.bpc              = document.getElementById("sn_bpc").checked;
+      this.wpc              = document.getElementById("sn_wpc").checked;
+      this.rawGma           = document.getElementById("sn_rgma").checked;
+      this.lensCorrection   = document.getElementById("sn_lc").checked;
+      this.horizontalMirror = document.getElementById("sn_hm").checked;
+      this.verticalFlip     = document.getElementById("sn_vf").checked;
+      this.dcw              = document.getElementById("sn_dcw").checked;
+      this.colorbar         = document.getElementById("sn_cb").checked;
+    }
+    genJson(){
+      return JSON.stringify(this);
+    }
+  }
 
 //******************************************************************************************
 //******************************************************************************************
@@ -392,7 +646,7 @@ function init(){ //TODO change to name reset()
       .catch(error => {
         console.error(error.message);
       })
-    console.log("s:", size);
+    //console.log("s:", size);
     const pic  = await fetch('/images/f2.bin?rand=\"' + Math.random(), {
         headers: {
           'Content-Type': 'application/octet-stream',
@@ -403,21 +657,34 @@ function init(){ //TODO change to name reset()
       .catch(error => {
         console.error(error.message);
       })
-    console.log("p");
+    //console.log("p");
     take_a_picture_new(parseInt(size.h), parseInt(size.w), pic);
     filter_on_spots();
+    check_sensor_settings();
     setTimeout(pic_timer, pic_period);
   }
   setTimeout(pic_timer, pic_period);
 
-  function take_a_picture_new(size_h, size_w, pic){
-    let slider_scale = document.getElementById("canvas_scale").value;
-    scale_chg = Boolean(slider_scale != canvas_scale);
-    if(scale_chg){
-      e_text = document.getElementById("scale_factor_text");
-      e_text.innerHTML = 'x' + slider_scale;
-      console.log("e_Text", e_text.innerHTML);
+  function check_sensor_settings(){
+    if (!cam_sensor){
+      cam_sensor = new Sensor();
     }
+    cam_sensor.getValuesFromDom();
+    let json = cam_sensor.genJson();
+    if (json != sensor_json){
+      sensor_json = json;
+      //console.log("sensor_json changed:", sensor_json);
+      send_sensor_values_to_server2(sensor_json)
+      .catch(error => {
+        print_to_status(STATUS_ERROR_USE_NOT_SET + error.message);
+        console.error(error.message);
+      });
+    }
+  }
+
+  function take_a_picture_new(size_h, size_w, pic){
+    let slider_scale = document.getElementById("pic_sc").value;
+    scale_chg = Boolean(slider_scale != canvas_scale);
     if (size_w != take_width || size_h != take_height || scale_chg) {
       canvas_scale = slider_scale;
       let hh = Math.round(size_w * canvas_scale);
@@ -435,6 +702,7 @@ function init(){ //TODO change to name reset()
       console.log("new take_bitmap canvas: ", size_h, size_w);
       scale_chg = true;
     }
+   
     let data = new Uint16Array(pic);
     //console.log("data:", data[0].toString(16));
     take_bitmap = new Bitmap(size_w, size_h, data, PixelType.RGB_565_LE, 0);
@@ -460,8 +728,8 @@ function init(){ //TODO change to name reset()
   };
 
   function show_period(period){
-    let e = document.getElementById("picture_period");
-    e.innerHTML = period + " ms";
+    let e = document.getElementById("pic_sp_val");
+    e.innerHTML = "2000 (" + period  + "ms)";
     pic_period = period;
   }
   
@@ -1107,14 +1375,15 @@ async function ren_profile_from_server2(p_old, p_new){
   return "";
 };
 
-async function send_profile_to_server2(pn, json){
-  const res = await fetch('submit.php', {
+async function send_json_to_server2(phpfunc, json){
+  console.log("send_json_to_server2", phpfunc, json);
+  const res = await fetch(phpfunc, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     },
-    body: "{\"profileName\":\"" + pn + "\"," + json.slice(1)
+    body: json
   })
   .catch(error => {
       throw new Error('Could not reach server', {cause: error});
@@ -1129,26 +1398,16 @@ async function send_profile_to_server2(pn, json){
   return "";
 };
 
+async function send_profile_to_server2(pn, json){
+  return send_json_to_server2('submit.php', "{\"profileName\":\"" + pn + "\"," + json.slice(1));
+};
+
 async function send_use_it_to_server2(pn, json){
-  const res = await fetch('useit.php', {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-    body: "{\"profileName\":\"" + pn + "\"," + json.slice(1)
-  })
-  .catch(error => {
-      throw new Error('Could not reach server', {cause: error});
-    });
-  if (!res.ok){
-     throw new Error(`Server responded with ${res.status} error: ${await res.text()}`); 
-  }
-  const status = await res.text();
-  if(!(status.includes("SUCCESS"))){
-    throw new Error(status);
-  }
-  return "";
+  return send_json_to_server2('useit.php', "{\"profileName\":\"" + pn + "\"," + json.slice(1));
+};
+
+async function send_sensor_values_to_server2(json){
+  return send_json_to_server2('sensor.php', json);
 };
 
 
@@ -1364,7 +1623,6 @@ async function send_use_it_to_server2(pn, json){
     return json;
   }
   
-  console.log("HELLO FIREFOX CONSOLE");
 
 //******************************************************************************************
 //******************************************************************************************
