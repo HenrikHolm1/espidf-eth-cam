@@ -1,233 +1,8 @@
 <!doctype html>
 <html lang="en-US">
   <head>
-    <style type="text/css">
-      canvas {
-       border: 1px solid black;
-      }
-
-      button.x {
-        position: relative;
-        display: inline-block;
-        height: 134px;
-        padding: 0;
-        margin: 0;
-        vertical-align: top;
-        background-image: url(images/Tv2.png);
-        background-size: 75px 75px;
-        width: 104px;
-      }
-    
-      table.sp {
-        border-collapse: collapse;
-        border: 3px solid #000000;
-        letter-spacing: 0px;
-        font-family: Arial;
-        font-size: 0.8rem;
-        color: #000000;
-        text-align: center;
-      }
-      table.sp td, table.sp th {
-        border: 1px solid #000000;
-      }
-      table.sp thead {
-        background: #CFCFCF;
-        border-bottom: 3px solid #000000;
-      }
-      table.sp thead th {
-        font-size: 15px;
-      }
-      table.sp tfoot {
-        color: #000000;
-      }
-      table.sp tfoot td {
-        font-size: 14px;
-      }
-      table.sp tbody {
-        border:0;
-      }
-      table.sp tr {
-        height:auto;
-        border:0px;
-      }
-      table.rgb td {
-        width:33%;
-        height:100%;
-        padding:0px;
-      }
-      table.rgb_i td {
-        width:33%;
-        border:0px;
-        padding:0px;
-        margin:0px;
-      }
-      table.rgb, table.rgb_i {
-        width: 100%;
-      }
-      .try_red, .try_green, .try_blue {
-        color:white;
-        text-align:right;
-        width: 64px;
-        padding:0px; 
-        margin:0px;
-      }
-      .try_red {
-        background:red;
-      }
-      .try_green {
-        background:green;
-      }
-      .try_blue {
-        background:blue;
-      }
-      .try_center, .try_spot_id{
-        text-align:center;
-        padding-right:4px;
-        padding-left:4px;
-      }
-      .try_right {
-        text-align:right;
-      }
-      .try_spot_id{
-        height:1px;
-      }
-
-      .try_width{
-        width: 100%; 
-        box-sizing: border-box;
-        -webkit-box-sizing:border-box;
-        -moz-box-sizing: border-box;
-      }
-      .try_width_28{
-        width: 245px;
-        text-align: left;
-      }
-      .try_width_right{
-        width: 100%; 
-        box-sizing: border-box;
-        -webkit-box-sizing:border-box;
-        -moz-box-sizing: border-box;
-        text-align:right;
-      }
-      .selectx{
-        background: #EEEEEE;
-        border-width: 100%;
-        width: 100%;
-        flex: 1;
-      }
-      .canvasesdiv{
-        --testw: 700px;
-        --testh: 700px;
-        position:relative;
-        width: var(--testw); 
-        height: var(--testh);
-      }
-      .spot_id_th_btn, .spot_id_btn{
-        width: 100%;
-        margin: 0px;
-      }
-      .spot_id_th_btn{
-        background: #CFCFCF;
-      }
-      .spot_id_btn{
-        background: #EEEEEE;
-      }
-      div { display: table; }
-      div.t {
-        display: table-cell;
-        width: 100%;
-      }
-      div.t > input {
-        width: 96%;
-      }
-      div.tx > span {
-        width: 33%;
-      }
-      .preference {
-        display: flex;
-        /*justify-content: space-between;*/
-        width: 200px;
-        border: 0px;
-        border-width: 0;
-      }
-      .grid-container {
-        display: grid;
-        grid-template-columns: 25ch 32ch 20ch;
-        gap: 0px;
-        background-color: white;
-        padding: 0px;
-      }
-      .grid-container2 {
-        display: grid;
-        grid-template-columns: 25ch 35ch;
-        gap: 0px;
-        background-color: white;
-        padding: 0px;
-      }
-      .grid-container .grid-container2 > div {
-        background-color: white;
-        text-align: left;
-        padding: 0px 0;
-        font-size: 17px;
-      }
-      .switch {
-        position: relative;
-        display: inline-block;
-        margin: 2px;
-        width: 34px;
-        height: 16px;
-      }
-      .switch input { 
-        opacity: 0;
-        width: 0;
-        height: 0;
-      }
-
-      .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        -webkit-transition: .4s;
-        transition: .4s;
-      }
-      .slider:before {
-        position: absolute;
-        content: "";
-        height: 10px;
-        width: 10px;
-        left: 2px;
-        bottom: 3px;
-        background-color: white;
-        -webkit-transition: .4s;
-        transition: .4s;
-      }
-
-      input:checked + .slider {
-        background-color: #2196F3;
-      }
-
-      input:focus + .slider {
-        box-shadow: 0 0 1px #2196F3;
-      }
-
-      input:checked + .slider:before {
-        -webkit-transform: translateX(20px);
-        -ms-transform: translateX(20px);
-        transform: translateX(20px);
-      }
-
-      /* Rounded sliders */
-      .slider.round {
-        border-radius: 30px;
-      }
-      .slider.round:before {
-        border-radius: 50%;
-      }
-    </style>
+    <link rel="stylesheet" href="calstyle.css">
+    <!--<style type="text/css"></style>-->
     <meta charset="utf-8" />
     <title>My test page</title>
   </head>
@@ -390,37 +165,39 @@
       </label>
     </div>
 </section>
-  <section style="border-width:10px; border-style:solid; border-color:white;">
-    <table class="sp">
-      <tr>
-        <th style="width:252px;"><label>Profile select:</label></th>
-        <th style="width:150px;"><label>Actions:</label></th>
-      </tr>
-      <tr style="vertical-align: top;">
-        <td id="profile_list_offset">
-          <ul id="profile_list" style="margin:0px;padding:0px;"></ul>
-        </td>
-        <td>
-          <button style="width:100%;" id='new_profile'  type='button' onclick='profile_btn__new()'    >New</button>
-          <button style="width:100%;" id='use_profile'  type='button' onclick='profile_btn__use()'    >Use</button>
-          <button style="width:100%;" id='sync_profile' type='button' onclick='sync_profile_btn_fn()' >Sync with server</button>
-          <button style="width:100%;" id='del_profile'  type='button' onclick='del_profile_btn_fn()'  >Delete</button>
-        </td>
-      </tr>
-    </table>
-    <div id="general_status" style="width:100%;">
-      <label id="general_status">GENERAL STATUS</label>
+<section style="border-width:10px; border-style:solid; border-color:white;">
+  <div class="gc4">
+    <div><strong>Profile select:</strong></div>
+    <div><strong>Actions:</strong></div>
+    <div id="profile_list_offset"><div id="profile_list"></div></div>
+    <div style="text-align:center">
+      <button class="gc4b" id='new_profile'  type='button' onclick='profile_btn__new()'    >New</button><br>
+      <button class="gc4b" id='use_profile'  type='button' onclick='profile_btn__use()'    >Use</button><br>
+      <button class="gc4b" id='sync_profile' type='button' onclick='sync_profile_btn_fn()' >Sync with server</button><br>
+      <button class="gc4b" id='del_profile'  type='button' onclick='del_profile_btn_fn()'  >Delete</button>
     </div>
-    <div id="profile_status_offset" style="width: 100%; overflow: hidden;">
-      <div id="profile_status"></div>
-      </div>
+  </div>
+  <div id="general_status" style="width:100%;">
+    <label id="general_status">GENERAL STATUS</label>
+  </div>
+  <div id="profile_status_offset" style="width: 100%; overflow: hidden;">
+    <div id="profile_status"></div>
+  </div>
 </section>
-  <section style="border-width:10px; border-style:solid; border-color:white;">
-    <table id="spot_table" class="sp">
+<iframe src="" width="100%" height="160" style="border:none;"></iframe>
+</body>
+<script>
+
+const table_html = `
+<head>
+  <link rel="stylesheet" href="calstyle.css">
+</head>
+<body>
+  <table id="spot_table" class="sp">
     <thead>
       <tr>
         <th align='center' style="margin: 0px; padding: 0px;">
-        <button class="spot_id_th_btn" id='Spot_id_all_btn' type='button' onclick='spot_id_btn_all_fn(id,this)' >Spot id</button>
+        <button class="spot_id_th_btn" id='Spot_id_all_btn' type='button' onclick='parent.spot_id_btn_all_fn(id,this)' >Spot id</button>
         </th>
         <th width="300px">Signal name</th>
         <th width="65px">Filter</th>
@@ -429,15 +206,135 @@
         <th width="205px">Max value</th>
         <th width="52px">Result</th>
       </tr>
-      </thead>
-      <tfoot>
-      </tfoot>
-      <tbody id="spot_table_tbody">
-      </tbody>
-    </table>
-  </section>
+    </thead>
+    <tfoot>
+    </tfoot>
+    <tbody id="spot_table_tbody">
+    </tbody>
+  </table>
 </body>
-<script>
+`;
+
+const cssHead = '<head><link rel="stylesheet" type="text/css" href="calstyle.css"></head>'
+
+const rms_row_template = `
+<tr id='spot_id{id}' >
+  <td>
+  <button class="spot_id_btn" id='spot_id_btn{id}' type='button' name='spot_id_name' onclick='parent.spot_id_btn_fn(id,this)' >{id}</button>
+  </td>
+  <td><input id='signal_name{id}' type='text' class='try_width' /></td>
+  <td>
+    <select id='filter{id}' class='selectx' onchange='parent.filter_select_fn(id,this)' '>
+      <option value='0' selected>RMS</option>
+      <option value='1'>RGB</option>
+    </select>
+  </td>
+  <td id='rms_val{id}' class='try_right'>-</td>
+  <td><input id='rms_min{id}' type='text' class='try_width_right'/></td>
+  <td><input id='rms_max{id}' type='text' class='try_width_right'/></td>
+  <td id='res{id}' class='try_center'>-</td>
+</tr>
+`;
+
+const rgb_row_template = `
+<tr id='spot_id{id}' >
+  <td align='center' style="padding: 0px;">
+  <button class="spot_id_btn" id='spot_id_btn{id}' type='button' name='spot_id_name' onclick='parent.spot_id_btn_fn(id,this)' >{id}</button>
+  </td>
+  <td>
+    <div style="border:0px;">
+      <div class="t"> <!-- This is the wrapper div around the text input -->
+        <input id='signal_name{id}' type="text" />
+      </div>
+      <button id='{id}' type='button' style="padding:0px; height:100%; width:38px;" onclick='parent.rgb_btn_fn(id,this)' >Add</button>
+    </div>
+  </td>
+  <td>
+    <select id='filter{id}' class='selectx' onchange='parent.filter_select_fn(id,this)' '>
+      <option value='0'>RMS</option>
+      <option value='1' selected>RGB</option>
+    </select>
+  </td>
+  <td>
+    <table class="rgb">
+      <tr>
+        <td id='rgb_val_r{id}' class="try_red">-</td>
+        <td id='rgb_val_g{id}' class="try_green">-</td>
+        <td id='rgb_val_b{id}' class="try_blue">-</td>
+      </tr>
+    </table>
+  </td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_min_r{id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_min_g{id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_min_b{id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>
+  </td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_max_r{id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_max_g{id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_max_b{id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>
+  </td>
+  <td id='res{id}' class='try_center'>-</td>
+</tr>
+`;
+
+const same_row_template = `
+<tr id='spot_id{id}' >
+  <td class='try_center'>same</td>
+  <td>
+    <div>
+      <div class="t"> <!-- This is the wrapper div around the text input -->
+        <input id='signal_name{alias_id}' type="text" />
+      </div>
+      <button id='{alias_id}' type='button' style="width:38px;" onclick='parent.rgb_btn_fn(id,this)' >Del</button>
+    </div>
+  </td>
+  <td class="try_center">same</td>
+  <td class="try_center">same as above</td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_min_r{alias_id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_min_g{alias_id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_min_b{alias_id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>    
+  </td>
+  <td>
+    <table class="rgb_i">
+      <tr>
+        <td><input id='rgb_max_r{alias_id}' type='text' class='try_red'   /></td>
+        <td><input id='rgb_max_g{alias_id}' type='text' class='try_green' /></td>
+        <td><input id='rgb_max_b{alias_id}' type='text' class='try_blue'  /></td>
+      </tr>
+    </table>    
+  </td>
+  <td id='res{alias_id}' class='try_center'>-</td>
+</tr>
+`;
+
+//*****************************************************************************************************************
+//*****************************************************************************************************************
+//*****************************************************************************************************************
+
+function initX(){
+  window.frames[0].document.body.innerHTML = table_html;
+}
+
+initX();
+
+//*****************************************************************************************************************
+//*****************************************************************************************************************
+//*****************************************************************************************************************
+
 
   function print_to_status(text){
     let e = document.getElementById("general_status");
@@ -620,7 +517,7 @@ function init(){ //TODO change to name reset()
 
     uid = 1;
 
-    cir   = new ExtendedCircle(0, 
+    cir = new ExtendedCircle(0, 
       SPOT_INITIAL_CIRCLE_COORD_X,
       SPOT_INITIAL_CIRCLE_COORD_Y,
       SPOT_INITIAL_CIRCLE_COORD_R, 
@@ -632,15 +529,24 @@ function init(){ //TODO change to name reset()
     layer2.addEventListener("mousedown", set_move_or_create_spot,            {passive: false});
     layer2.addEventListener("mousemove", move_cursor_circle,                 {passive: false});
 
-    let tbl = document.getElementById("spot_table_tbody");
+    let d = window.frames[0].document;
+    let tbl = d.getElementById("spot_table_tbody");
     for(var i = 0;i<tbl.rows.length;){
       tbl.deleteRow(i);
     }
+    console.log("init(exit)", window.frames[0].document.getElementById("spot_table_tbody"));
 
     //take_a_picture_new();
   }
 
+  var firstx = true;
   var pic_timer = async function(){
+    if(firstx){ //for unknown reason is the innerHtml cleared when this function is called
+      console.log("pic_timer", window.frames[0].document.getElementById("spot_table_tbody"));
+      initX(); //set it again!
+      console.log("pic_timer2", window.frames[0].document.getElementById("spot_table_tbody"));
+      firstx = false;
+    }
     const size = await fetch("picsize.json")
       .then((response) => response.json())
       .catch(error => {
@@ -745,29 +651,31 @@ function init(){ //TODO change to name reset()
     let gbit = Boolean(gval >= rgbArr[1] && gval <= rgbArr[4])
     let bbit = Boolean(bval >= rgbArr[2] && bval <= rgbArr[5])
     let res  = Boolean(rbit && gbit && bbit);
-    e = document.getElementById("res" + id_str);
+    let d = window.frames[0].document;
+    e = d.getElementById("res" + id_str);
     e.innerHTML = res.toString();
   }
 
   function filter_on_spots(){
     let e;
+    let d = window.frames[0].document;
     for (let sp of spots.iterate()){
       let s = sp.id.toString();
-      e = document.getElementById("filter" + s);
+      e = d.getElementById("filter" + s);
       switch(Number(e.value)){
         case FilterType.RMS:{
           objfn = new CalcRMSonRGBpixels(take_bitmap);
           sp.tm.calc_rms_inside_circle(sp.co.x, sp.co.y, take_bitmap.w, objfn);
           let rms = objfn.get_value();
-          document.getElementById("rms_val" + s).innerHTML = rms.toString();
+          d.getElementById("rms_val" + s).innerHTML = rms.toString();
 
-          let rms_min = document.getElementById("rms_min" + s).value;
-          let rms_max = document.getElementById("rms_max" + s).value;
+          let rms_min = d.getElementById("rms_min" + s).value;
+          let rms_max = d.getElementById("rms_max" + s).value;
           if(rms_min < 0){rms_min = rms;}
           if(rms_max < 0){rms_max = rms;}
           let res = Boolean(rms >= rms_min && rms <= rms_max);
 
-          e = document.getElementById("res" + s);
+          e = d.getElementById("res" + s);
           e.innerHTML = res.toString();
           break;
         }
@@ -775,11 +683,11 @@ function init(){ //TODO change to name reset()
           objfn = new CalcRMSonSeparateRGBpixels(take_bitmap);
           sp.tm.calc_rms_inside_circle(sp.co.x, sp.co.y, take_bitmap.w, objfn);
           let [rval, gval, bval] = objfn.get_values();
-          document.getElementById("rgb_val_r" + s).innerHTML = rval.toString();
-          document.getElementById("rgb_val_g" + s).innerHTML = gval.toString();
-          document.getElementById("rgb_val_b" + s).innerHTML = bval.toString();
+          d.getElementById("rgb_val_r" + s).innerHTML = rval.toString();
+          d.getElementById("rgb_val_g" + s).innerHTML = gval.toString();
+          d.getElementById("rgb_val_b" + s).innerHTML = bval.toString();
           check_rgb_values(s, rval, gval, bval);
-          Array.from(document.getElementsByName("alias" + s)).map(function (e){
+          Array.from(d.getElementsByName("alias" + s)).map(function (e){
             check_rgb_values(e.id, rval, gval, bval);
           });
           break;
@@ -830,11 +738,11 @@ function init(){ //TODO change to name reset()
   }
 
   const profile_list_row_template = `
-<li      name="profile_list_row_li" style="padding:0px; margin:0px; display:flex">
-  <p     style="margin:0px;">{p_star}</p>
+<div name="profile_list_row_li" class="gc3">
+  <div>{p_star}</div>
   <input name="profile_list_row_check" type="checkbox" />
-  <input name="profile_list_row_name" style="background:{p_sel};" type='text' value="{p_name}"/>
-</li>
+  <input name="profile_list_row_name"  type='text' value="{p_name}"/>
+</div>
 `;
 
   class Profiles{
@@ -901,8 +809,8 @@ function init(){ //TODO change to name reset()
     }
     generate_profile_list(){
       let dom_profile_list_str = "";
-      const start_tbl = "<ul id=\"profile_list\" style=\"margin:0px;padding:0px;\">";
-      const end_tbl = "</ul>";
+      const start_tbl = "<div id=\"profile_list\">";
+      const end_tbl = "</div>";
 
       for (const [p_name, p] of Object.entries(this.profiles)){
         let c;
@@ -1505,30 +1413,28 @@ async function send_sensor_values_to_server2(json){
         yield sp;
       }
     }
-    //yield *this.arr.map(function (sp_, index, arr){
-    //  });
-    //};
   }
 
   function restore_spot(id, jsp){
     if(jsp == null){
       return;
     }
+    let d = window.frames[0].document;
     let s = id.toString();
     switch(jsp.filterType){
       case "RMS":{
-        document.getElementById("signal_name" + s).value = jsp.sigalName;
-        document.getElementById("rms_min"     + s).value = jsp.min;
-        document.getElementById("rms_max"     + s).value = jsp.max;
+        d.getElementById("signal_name" + s).value = jsp.sigalName;
+        d.getElementById("rms_min"     + s).value = jsp.min;
+        d.getElementById("rms_max"     + s).value = jsp.max;
         break;
       }
       case "RGB":{
         filter_select(id, FilterType.RGB);
-        document.getElementById("signal_name" + s).value = jsp.sigalName;
+        d.getElementById("signal_name" + s).value = jsp.sigalName;
         get_rgb_elements(s).map((e, ix) => e.value = jsp.rgbArr[ix]);
         for(let jsu of jsp.aliasArr){
           let alias_id = add_alias_to_row(id, "Add");
-          document.getElementById("signal_name" + alias_id).value = jsu.sigalName;
+          d.getElementById("signal_name" + alias_id).value = jsu.sigalName;
           get_rgb_elements(alias_id).map((e, ix) => e.value = jsu.rgbArr[ix]);
         }
         break;
@@ -1579,23 +1485,24 @@ async function send_sensor_values_to_server2(json){
     oo.x = sp.co.x;
     oo.y = sp.co.y;
     oo.r = sp.co.r;
-    e = document.getElementById("signal_name" + s);
+    let d = window.frames[0].document;
+    e = d.getElementById("signal_name" + s);
     oo.sigalName = e.value;
     switch(filter_nr){
       case FilterType.RMS:{
         oo.filterType = "RMS";
-        oo.min = document.getElementById("rms_min" + s).value;
-        oo.max = document.getElementById("rms_max" + s).value;
+        oo.min = d.getElementById("rms_min" + s).value;
+        oo.max = d.getElementById("rms_max" + s).value;
         break;
       }
       case FilterType.RGB:{
         oo.filterType = "RGB";
         oo.rgbArr = get_rgb_elements(sp.id.toString()).map((e) => e.value);
         oo.aliasArr = [];
-        Array.from(document.getElementsByName("alias" + s)).map(function (e){
+        Array.from(d.getElementsByName("alias" + s)).map(function (e){
           let su = new Object();
           let s = e.id.toString();
-          su.sigalName = document.getElementById("signal_name" + s).value;
+          su.sigalName = d.getElementById("signal_name" + s).value;
           su.rgbArr = get_rgb_elements(s).map((e) => e.value);
           oo.aliasArr.push(su);
         });
@@ -1991,10 +1898,11 @@ class PixColor{
   }
 
   function get_rgb_elements(id){
+    let d = window.frames[0].document;
     let arr = [];
     let arrs = ["rgb_min_r", "rgb_min_g", "rgb_min_b", "rgb_max_r", "rgb_max_g", "rgb_max_b"];
     for(eid of arrs){
-      arr.push(document.getElementById(eid + id));
+      arr.push(d.getElementById(eid + id));
     }
     return arr;
   }
@@ -2154,6 +2062,9 @@ function set_move_or_create_spot(){
 };
 
 function move_cursor_circle(event) {
+  if(take_bitmap == null){
+    return;
+  }
   rect = layer1.getBoundingClientRect();
   cir.x = event.clientX - rect.left;
   cir.y = event.clientY - rect.top;
@@ -2227,109 +2138,6 @@ function get_distance(x0, x1, y0, y1){
 // |____/ \___/|_|  |_|
 //******************************************************************************************
 //******************************************************************************************
-const rms_row_template = `
-<tr id='spot_id{id}' >
-  <td>
-  <button class="spot_id_btn" id='spot_id_btn{id}' type='button' name='spot_id_name' onclick='spot_id_btn_fn(id,this)' >{id}</button>
-  </td>
-  <td><input id='signal_name{id}' type='text' class='try_width' /></td>
-  <td>
-    <select id='filter{id}' class='selectx' onchange='filter_select_fn(id,this)' '>
-      <option value='0' selected>RMS</option>
-      <option value='1'>RGB</option>
-    </select>
-  </td>
-  <td id='rms_val{id}' class='try_right'>-</td>
-  <td><input id='rms_min{id}' type='text' class='try_width_right'/></td>
-  <td><input id='rms_max{id}' type='text' class='try_width_right'/></td>
-  <td id='res{id}' class='try_center'>-</td>
-</tr>
-`;
-
-const rgb_row_template = `
-<tr id='spot_id{id}' >
-  <td align='center' style="padding: 0px;">
-  <button class="spot_id_btn" id='spot_id_btn{id}' type='button' name='spot_id_name' onclick='spot_id_btn_fn(id,this)' >{id}</button>
-  </td>
-  <td>
-    <div style="border:0px;">
-      <div class="t"> <!-- This is the wrapper div around the text input -->
-        <input id='signal_name{id}' type="text" />
-      </div>
-      <button id='{id}' type='button' style="padding:0px; height:100%; width:38px;" onclick='rgb_btn_fn(id,this)' >Add</button>
-    </div>
-  </td>
-  <td>
-    <select id='filter{id}' class='selectx' onchange='filter_select_fn(id,this)' '>
-      <option value='0'>RMS</option>
-      <option value='1' selected>RGB</option>
-    </select>
-  </td>
-  <td>
-    <table class="rgb">
-      <tr>
-        <td id='rgb_val_r{id}' class="try_red">-</td>
-        <td id='rgb_val_g{id}' class="try_green">-</td>
-        <td id='rgb_val_b{id}' class="try_blue">-</td>
-      </tr>
-    </table>
-  </td>
-  <td>
-    <table class="rgb_i">
-      <tr>
-        <td><input id='rgb_min_r{id}' type='text' class='try_red'   /></td>
-        <td><input id='rgb_min_g{id}' type='text' class='try_green' /></td>
-        <td><input id='rgb_min_b{id}' type='text' class='try_blue'  /></td>
-      </tr>
-    </table>
-  </td>
-  <td>
-    <table class="rgb_i">
-      <tr>
-        <td><input id='rgb_max_r{id}' type='text' class='try_red'   /></td>
-        <td><input id='rgb_max_g{id}' type='text' class='try_green' /></td>
-        <td><input id='rgb_max_b{id}' type='text' class='try_blue'  /></td>
-      </tr>
-    </table>
-  </td>
-  <td id='res{id}' class='try_center'>-</td>
-</tr>
-`;
-
-const same_row_template = `
-<tr id='spot_id{id}' >
-  <td class='try_center'>same</td>
-  <td>
-    <div>
-      <div class="t"> <!-- This is the wrapper div around the text input -->
-        <input id='signal_name{alias_id}' type="text" />
-      </div>
-      <button id='{alias_id}' type='button' style="width:38px;" onclick='rgb_btn_fn(id,this)' >Del</button>
-    </div>
-  </td>
-  <td class="try_center">same</td>
-  <td class="try_center">same as above</td>
-  <td>
-    <table class="rgb_i">
-      <tr>
-        <td><input id='rgb_min_r{alias_id}' type='text' class='try_red'   /></td>
-        <td><input id='rgb_min_g{alias_id}' type='text' class='try_green' /></td>
-        <td><input id='rgb_min_b{alias_id}' type='text' class='try_blue'  /></td>
-      </tr>
-    </table>    
-  </td>
-  <td>
-    <table class="rgb_i">
-      <tr>
-        <td><input id='rgb_max_r{alias_id}' type='text' class='try_red'   /></td>
-        <td><input id='rgb_max_g{alias_id}' type='text' class='try_green' /></td>
-        <td><input id='rgb_max_b{alias_id}' type='text' class='try_blue'  /></td>
-      </tr>
-    </table>    
-  </td>
-  <td id='res{alias_id}' class='try_center'>-</td>
-</tr>
-`;
 
 function get_replaced_string(replacer, template){
   let new_row = template.replace(/{([^{}]+)}/g, function(keyExpr, key) {
@@ -2368,25 +2176,31 @@ function add_same(row, id_str, alias_id_str){
 }
 
 function appendColumn(id) {
-  let tbl = document.getElementById("spot_table_tbody"); //has the tbody attributes
+  //let d   = document;
+  let d   = window.frames[0].document;
+  let tbl = d.getElementById("spot_table_tbody"); //has the tbody attributes
   add_rms_row(tbl, id.toString());
 }
 
 function delete_column(id) {
+  //let d   = document;
+  let d   = window.frames[0].document;
   let s = id.toString();
-  Array.from(document.getElementsByName("alias" + s)).map((e)=>e.remove());
-  document.getElementById("spot_id" + s).remove();
+  Array.from(d.getElementsByName("alias" + s)).map((e)=>e.remove());
+  d.getElementById("spot_id" + s).remove();
 }
 
 function filter_select(id, filter_nr){
+  //let d   = document;
+  let d   = window.frames[0].document;
   let s   = id.toString();
   let si  = "spot_id" + s;
-  let row = document.getElementById(si);
-  let new_row = document.createElement("tr");
+  let row = d.getElementById(si);
+  let new_row = d.createElement("tr");
   new_row.id = si;
   switch(filter_nr){
     case FilterType.RMS:{
-      Array.from(document.getElementsByName("alias" + s)).map((e)=>e.remove());
+      Array.from(d.getElementsByName("alias" + s)).map((e)=>e.remove());
       add_rms_row(new_row, s);
       break;
     }
@@ -2409,15 +2223,18 @@ function filter_select_fn(filter_id, sel){
   spot_id_set_btn_background(id);
 }
 
+
+
 function add_alias_to_row(dual_id, cmd){
   let alias_id;
+  let d = window.frames[0].document;
   switch(cmd){
     case "Add":{
       let spot_id_str = dual_id.toString();
-      let row = document.getElementById("spot_id" + spot_id_str);
-      let alias_arr = document.getElementsByName("alias" + spot_id_str);
+      let row = d.getElementById("spot_id" + spot_id_str);
+      let alias_arr = d.getElementsByName("alias" + spot_id_str);
       let rowIndex = row.rowIndex + alias_arr.length + 1;
-      let new_row = document.getElementById("spot_table").insertRow(rowIndex);
+      let new_row = d.getElementById("spot_table").insertRow(rowIndex);
       alias_id = spot_id_str + '_' + alias_arr.length;
       new_row.id = alias_id;
       //new_row.name = "alias"  + s; //does not work!
@@ -2427,7 +2244,7 @@ function add_alias_to_row(dual_id, cmd){
     }
     case "Del":{
       alias_id = dual_id;
-      document.getElementById(alias_id).remove();
+      d.getElementById(alias_id).remove();
       break;
     }
   }
@@ -2440,7 +2257,8 @@ function rgb_btn_fn(id, b){
 
 
 function spot_id_set_btn_background(id){
-  let e = document.getElementById("spot_id_btn" + id.toString());
+  let d = window.frames[0].document;
+  let e = d.getElementById("spot_id_btn" + id.toString());
   let sp = this.spots.get_spot(id);
   if(sp.text_show_number){
     e.style.backgroundColor = SPOT_ID_BTN_COLOR_ACTIVE;
@@ -2451,14 +2269,16 @@ function spot_id_set_btn_background(id){
 }
 
 function spot_id_btn_all_fn(id, b){
+  //let spids = Array.from(document.getElementsByName("spot_id_name"));
+  let spids = Array.from(window.frames[0].document.getElementsByName("spot_id_name"));
   if(b.style.backgroundColor == SPOT_ID_BTN_COLOR_ALL_ACTIVE){
     this.spots.spots.map((sp) => sp.text_show_number = false);
     b.style.backgroundColor = SPOT_ID_BTN_COLOR_ALL_UNACTIVE;
-    Array.from(document.getElementsByName("spot_id_name")).map((e) => e.style.backgroundColor = SPOT_ID_BTN_COLOR_UNACTIVE);
+    spids.map((e) => e.style.backgroundColor = SPOT_ID_BTN_COLOR_UNACTIVE);
   }else{
     this.spots.spots.map((sp) => sp.text_show_number = true);
     b.style.backgroundColor = SPOT_ID_BTN_COLOR_ALL_ACTIVE;
-    Array.from(document.getElementsByName("spot_id_name")).map((e) => e.style.backgroundColor = SPOT_ID_BTN_COLOR_ACTIVE);
+    spids.map((e) => e.style.backgroundColor = SPOT_ID_BTN_COLOR_ACTIVE);
   }
   draw_spots_and_circle(spots, cir);
 }
@@ -2764,8 +2584,24 @@ def convert_rgb565_to_png(args):
 if __name__ == '__main__':
     main()
 
+************************************************************************************
+*/
 
+//tblw = window.open("", "spot table", "popup");
+//function tryNewThings() {
+  //for (const sheet of document.styleSheets) {
+  //  console.log("stylesheet:", sheet);
+  //}
 
-  */
+  //let e = document.getElementById("spot_table");
+  //var data = e.outerHTML;
+  //let e2 = tblw.document.getElementById("spot_table");
+  //if(e2){
+  //  e2.innerHTML = data;
+  //}else{
+  //  tblw.document.write(cssHead + data);
+  //}
+//}
+
 </script>
 </html>
