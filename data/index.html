@@ -22,7 +22,9 @@
     <div class="grid-container">
       <div>Picture scale:</div>
       <div>Picture speed:</div>
-      <div>Camera sensor settings:</div>
+      <div>Camera sensor:</div>
+      <div style="margin-left:27px;">Profile select:</div>
+      <div style="margin-left:48px;">Save work:</div>
       <div style="display: flex; flex-flow: row; align-items: center; justify-content: flex-start;">
         <label>x1</label>
         <input id="pic_sc" type ="range" max="5" min="1" step="1" value="0" oninput="document.getElementById('pic_sc_val').innerHTML = 'x5 (x' + this.value + ')'"></input>
@@ -33,7 +35,9 @@
         <input id="pic_sp" type ="range" max="2000" min="40" step="1" value="500" onchange="show_period(this.value)" oninput="show_period(this.value)"></input>
         <label id="pic_sp_val">2000 (500ms)</label>
       </div>
-      <button style="width:100%;" type='button' onclick="document.getElementById('sensor_t').hidden ^= true;">Show/Hide</button>
+      <button style="width:128px;" type='button' onclick="document.getElementById('sensor_t').hidden ^= true;">Show/Hide</button>
+      <button style="margin-left:20px;width:128px;" type='button' onclick="document.getElementById('profile_list_all').hidden ^= true;">Show/Hide</button>
+      <button style="margin-left:30px;width:128px;" type='button' onclick='profile_btn__new()'>Save</button>
     </div>
   </section>
   <section id="sensor_t" style="border-width:10px; border-style:solid; border-color:cyan;" hidden>
@@ -165,7 +169,7 @@
       </label>
     </div>
 </section>
-<section style="border-width:10px; border-style:solid; border-color:white;">
+<section id="profile_list_all" style="border-width:10px; border-style:solid; border-color:white;" hidden>
   <div class="gc4">
     <div><strong>Profile select:</strong></div>
     <div><strong>Actions:</strong></div>
@@ -175,15 +179,16 @@
       <button class="gc4b" id='use_profile'  type='button' onclick='profile_btn__use()'    >Use</button><br>
       <button class="gc4b" id='sync_profile' type='button' onclick='sync_profile_btn_fn()' >Sync with server</button><br>
       <button class="gc4b" id='del_profile'  type='button' onclick='del_profile_btn_fn()'  >Delete</button>
+      <button class="gc4b" id='clr_profile'  type='button' onclick='clr_profile_btn_fn()'  >Clear</button>
     </div>
   </div>
   <div id="general_status" style="width:100%;">
     <label id="general_status">GENERAL STATUS</label>
   </div>
-  <div id="profile_status_offset" style="width: 100%; overflow: hidden;">
-    <div id="profile_status"></div>
-  </div>
-</section>
+  </section>
+<div id="profile_status_offset" style="width: 100%; overflow: hidden;">
+  <div id="profile_status"></div>
+</div>
 <iframe src="" width="100%" height="160" style="border:none;"></iframe>
 </body>
 <script>
@@ -1514,12 +1519,13 @@ async function send_sensor_values_to_server2(json){
 
   function generate_json_of_work(p_name){
     var e;
+    let d = window.frames[0].document;
     var o = new Object();
     o.imW = take_bitmap.w;
     o.imH = take_bitmap.h;
     o.spots = [];
     for (sp of spots.iterate()){
-      e = document.getElementById("filter" + sp.id.toString());
+      e = d.getElementById("filter" + sp.id.toString());
       let oo = get_sp_info(sp, Number(e.value));
       o.Save = sp.save;
       o.spots.push(oo);

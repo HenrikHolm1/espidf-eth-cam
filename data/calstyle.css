@@ -136,7 +136,7 @@ table.rgb, table.rgb_i {
 }
 .grid-container {
   display: grid;
-  grid-template-columns: 25ch 32ch 20ch;
+  grid-template-columns: 25ch 32ch 13ch 14ch 14ch;
   gap: 0px;
   background-color: white;
   padding: 0px;
