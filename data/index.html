@@ -214,9 +214,9 @@ const table_html = `
         </th>
         <th width="300px">Signal name</th>
         <th width="65px">Filter</th>
-        <th width="205px">Current measurement</th>
-        <th width="205px">Min value</th>
-        <th width="205px">Max value</th>
+        <th width="150px">Measurement</th>
+        <th width="150px">Min value</th>
+        <th width="150px">Max value</th>
         <th width="52px">Result</th>
       </tr>
     </thead>
@@ -742,15 +742,17 @@ function init(){ //TODO change to name reset()
       this.p_sel = ""; //set when work has a profile
     }
     remove_server_profiles_from_list(){
-      Object.entries(this.profiles).forEach(entry => {
-        const [p_name, p] = entry;
+      console.log("remove_server_profiles_from_list. profiles:", this.profiles);
+      for (const [pn, p] of Object.entries(this.profiles)){
+        console.log("remove_server_profiles_from_list2. pn:", pn, "s:", p.status);
         if(p.status == ProfileState.ON_SERVER){
-          if(this.p_sel == p_name){
+          if(this.p_sel == pn){
             this.p_sel = "";
           }
-          delete this.profiles[p_name];
+          delete this.profiles[pn];
+          console.log("remove_server_profiles_from_list3. pn:", pn);
         }
-      }, this);
+      }
     }
     add_profile(p_name, p_sel, status, json){
       if(p_sel){
@@ -769,9 +771,9 @@ function init(){ //TODO change to name reset()
     }
     rename(p_old, p_new){
       if (p_old !== p_new) {
-        this.profiles[p_new] = this.profiles[p_old];
+        Object.defineProperty(this.profiles, p_new,
+        Object.getOwnPropertyDescriptor(this.profiles, p_old));
         delete this.profiles[p_old];
-        this.profiles[p_new].name = p_new;
         if(this.p_sel == p_old){
           this.p_sel = p_new;
         }
@@ -1029,12 +1031,9 @@ const profile_status_ok_overwrite_cancel_part = `
       console.log("check_work_status2: work_triggered");
       if(g_profile_lists.p_sel == ""){
         let ret = await ask_user__work_not_saved();
-        console.log("check_work_status ret:", ret);
         if(ret == "canceled"){
           return ret;
         }
-      } else {
-        g_profile_lists.profiles[g_profile_lists.p_sel].status = ProfileState.IS_LOCAL;
       }
       save_work_locally(g_profile_lists.p_sel);
     }
@@ -1062,11 +1061,10 @@ const profile_status_ok_overwrite_cancel_part = `
 
   async function profile_btn__click(p_next){
     var ret = await check_work_status();
-    console.log("update_profile_list_on_DOM click1. ret:", ret);
+    console.log("profile_btn__click. ret:", ret, "p_sel:", g_profile_lists.p_sel, "p_next:", p_next, "s:", g_profile_lists.profiles[p_next].status, "c:", spots.touched);
     if(ret == "canceled"){
       return;
     }
-    console.log("update_profile_list_on_DOM click2. p_sel:", g_profile_lists.p_sel, "p_next:", p_next);
     load_work(g_profile_lists.profiles[p_next].json);
     set_selected(p_next);
     print_to_status(STATUS_PROFILE_SELECTED);
@@ -1120,38 +1118,6 @@ const profile_status_ok_overwrite_cancel_part = `
     print_to_status(STATUS_USE_SET_TO + "\"" + p_sel + "\"");
   }
 
-  async function rename_profile(p_old, p_new){
-    const po = g_profile_lists.profiles[p_old];
-    if(po.status == ProfileState.ON_SERVER){
-      let st = await ren_profile_from_server2(p_old, p_new)
-      .catch(error => {
-        print_to_status(STATUS_ERROR_RENAME + " Server says: " + error.message);
-        console.error(error.message);
-      });
-    }
-
-    g_profile_lists.rename(p_old, p_new);
-    print_to_status(STATUS_RENAME_SUCCESS);
-  }
-
-  function check_and_rename(p_old, p_new){
-    if(p_new == p_old){
-      return false;
-    }
-    if(p_new in g_profile_lists.profiles){
-      print_to_status(STATUS_ERROR_RENAME_PROFILE_EXISTS);
-      console.log("check_and_rename exists. p_old:", p_old, "p_new", p_new, "p_sel", g_profile_lists.p_sel);
-      return true;
-    }
-    g_profile_lists.p_sel = p_new;
-    rename_profile(p_old, p_new);
-    g_profile_lists.profiles[p_new].status = ProfileState.IS_LOCAL;
-    console.log("check_and_rename. p_old:", p_old, "p_new", p_new, "p_sel", g_profile_lists.p_sel);
-    e3.target.blur();
-    print_to_status(STATUS_RENAME_SUCCESS);
-    return false;
-  }
-
   const profile_clash_part = `
 <div id="profile_status" style="width: 100%; border: 0px; overflow: hidden;">
   <div style="width: 250px; float:left; border: 0px;">
@@ -1164,14 +1130,18 @@ const profile_status_ok_overwrite_cancel_part = `
     <button id='ask_user_btn__fn2' style="width:100%;" type='button'' >Rename local</button>
   </div>
   <div style="text-align:center; float:left; border: 1px solid cyan;">
-    <button id='ask_user_btn__fn3' style="width:100%;" type='button'' >Overwrite local</button>
+    <button id='ask_user_btn__fn3' style="width:100%;" type='button'' >Overwrite on server</button>
+  </div>
+  <div style="text-align:center; float:left; border: 1px solid cyan;">
+    <button id='ask_user_btn__fn4' style="width:100%;" type='button'' >Overwrite local</button>
   </div>
   <div style="width: 3em; text-align:center; float:left; border: 1px solid cyan;">
-    <button id='ask_user_btn__fn4' style="width:100%;" type='button'' >Cancel</button>
+    <button id='ask_user_btn__fn5' style="width:100%;" type='button'' >Cancel</button>
   </div>
 </div>
 `;
   async function name_clash_ask_user_what_to_do(ivalue, p_name_clash, names_on_server){
+    //Assuming: after this function must the profile list be updated with profiles on the server
     console.log("name_clash_ask_user_what_to_do", names_on_server);
     let info = STATUS_ERROR_PROFIFLE_EXISTS_SERVER;
     while(true){
@@ -1202,11 +1172,19 @@ const profile_status_ok_overwrite_cancel_part = `
         g_profile_lists.rename(p_old, p_new);
         return false;
       }
-      if(ret.status == "ask_user_btn__fn3"){ //overwrite local
+      if(ret.status == "ask_user_btn__fn3"){ //overwrite server
+        await del_profile_om_server2(ret.pn)
+          .catch(error => {
+            print_to_status(STATUS_ERROR_DELETE + " Server says: " + error.message);
+            console.error(error.message);
+          });
+        return false;
+      }
+      if(ret.status == "ask_user_btn__fn4"){ //overwrite local
         g_profile_lists.remove(p_name_clash);
         return false;
       }
-      if(ret.status == "ask_user_btn__fn4"){ //cancel
+      if(ret.status == "ask_user_btn__fn5"){ //cancel
         return true;
       }
       return true;
@@ -1227,8 +1205,10 @@ const profile_status_ok_overwrite_cancel_part = `
       });
 
     g_profile_lists.remove_server_profiles_from_list();
+    console.log("names_on_server:", names_on_server);
 
     //check for name clashing with local profiles
+    console.log("sync_profile_btn_fn. p:", g_profile_lists.profiles, "c:", spots.touched);
     for (const [key, pn] of Object.entries(names_on_server)){
       if(pn in g_profile_lists.profiles){
         canceled = await name_clash_ask_user_what_to_do(pn, pn, names_on_server);
@@ -1273,29 +1253,27 @@ const profile_status_ok_overwrite_cancel_part = `
 async function profile_btn__del(){
   let i;
   let check_found = false;
-  let a = document.getElementsByName("profile_list_row_li");
   //getElementsByClassName returns a HTMLCollection, not an array.
   //Removing anything from the DOM which is present in HTMLCollection 
   //will also decrease the length of that HTMLCollection.
-  a = Array.from(a); 
-  for(let e of a){
+  for(let e of Array.from(document.getElementsByName("profile_list_row_li"))){
     let e_checkbox = e.children[1];
     if(e_checkbox.checked){
       check_found = true;
-      let p_name = e.children[2].innerHTML;
-      let origin = e.children[0].innerText;
-      if(origin === SERVER_PROFILE){
-        await del_profile_from_server2(p_name)
+      let pn = e.children[2].innerHTML;
+      let p = g_profile_lists.profiles[pn];
+      if(p.status == ProfileState.ON_SERVER){
+        await del_profile_om_server2(pn)
           .catch(error => {
             print_to_status(STATUS_ERROR_DELETE + " Server says: " + error.message);
             console.error(error.message);
           });
       }
-      console.log("profile_btn__del. p_name:", p_name, "p_sel:", g_profile_lists.p_sel);
-      if(p_name == g_profile_lists.p_sel){
+      console.log("profile_btn__del. p_name:", pn, "p_sel:", g_profile_lists.p_sel);
+      if(pn == g_profile_lists.p_sel){
         clear_work(true);
       }
-      g_profile_lists.remove(p_name);
+      g_profile_lists.remove(pn);
       e.remove();
     }
   }
@@ -1333,12 +1311,13 @@ async function get_profiles_from_server(){
   if (!response.ok) {
     throw new Error(`An error has occured: ${response.status}`);
   }
+  console.log("get_profiles_from_server:", response);
   const profiles = await response.json();
   let profiles_files = (profiles.files).map((o) => o.file.replace('.json',''));
   return profiles_files;
 }
 
-async function del_profile_from_server2(profile_name){
+async function del_profile_om_server2(profile_name){
   const response = await fetch('delprofile.php', {
     method: 'POST',
     headers: {
@@ -1373,7 +1352,6 @@ async function ren_profile_from_server2(p_old, p_new){
 };
 
 async function send_json_to_server2(phpfunc, json){
-  console.log("send_json_to_server2", phpfunc, json);
   const res = await fetch(phpfunc, {
     method: 'POST',
     headers: {
@@ -1483,6 +1461,10 @@ async function send_sensor_values_to_server2(json){
       this.spots = this.spots.filter(function(sp2){
         if(spot_id == sp2.id){
           this_.delete_column_fn(sp2.id);
+          if(this_.spots.length <= 1){ //1 == last not deleted yet
+            untouch_work();
+            console.log("del_spot. untouch_work");
+          }
           return false;
         }
         return true;
@@ -1531,6 +1513,11 @@ async function send_sensor_values_to_server2(json){
     g_profile_lists.set_touched_for_selected(true);
   }
 
+  function untouch_work(){
+    spots.touched = false;
+    spots.has_moved = false;
+  }
+
   function clear_work(draw_circles){
     console.log("clear_work dc:", draw_circles);
     initX();
@@ -1547,11 +1534,12 @@ async function send_sensor_values_to_server2(json){
   }
 
   function load_work(json){
-    console.log("load_work. json:", json);
     clear_work(true);
     if(json == ""){
+      console.log("load_work: null");
       return; //selected profile has no work
     }
+    console.log("load_work");
 
     //const c = {...cir}
     const obj = JSON.parse(json);
@@ -1584,7 +1572,7 @@ async function send_sensor_values_to_server2(json){
     let p = g_profile_lists.profiles[p_name];
     p.json = json;
     p.status = ProfileState.IS_LOCAL;
-    console.log("save_work_locally. json:", p.json);
+    untouch_work();
   }
 
   function get_sp_info(sp, filter_nr){
